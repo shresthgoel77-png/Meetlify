@@ -1,0 +1,626 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* DM Sans (OFL) — bundled subset that keeps the ss03/ss04 stylistic sets. */
+@font-face {
+  font-family: 'DM Sans';
+  src: url('../fonts/DMSans-Variable.woff2') format('woff2');
+  font-weight: 100 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Design tokens — "sunlit paper notebook" (matches the desktop app). */
+:root {
+  --paper:         #f8f5ed;   /* Cream Paper — surface */
+  --ink:           #000000;   /* Ink — text + hairlines */
+  --graphite:      #707070;   /* Graphite — secondary text */
+  --sunshine:      #ffda6e;   /* Sunshine Highlight — the one primary action */
+  --sunshine-deep: #f5ca50;
+  --mint:          #6ece9d;   /* Mint Signal — status only */
+  --signal:        #c84132;   /* Signal red — recording / errors */
+  --ink-tint:      rgba(0, 0, 0, 0.06);
+
+  --radius-pill:   9999px;
+  --radius-tile:   12px;
+  --radius-input:  6px;
+}
+
+html, body {
+  width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+  background-color: transparent !important;
+  color-scheme: light;
+}
+
+body {
+  font-family: 'DM Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-feature-settings: "ss03", "ss04";
+  font-size: 14px;
+  color: var(--ink);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+#overlay-root {
+  padding: 0;
+  margin: 0;
+  background: transparent !important;
+  width: 100%;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* ── Pill ───────────────────────────────────────────────── */
+/* Floats above the meeting: a raised 2px ink border, never a shadow. */
+.pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  height: 52px;
+  min-height: 52px;
+  max-height: 52px;
+  box-sizing: border-box;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-pill);
+  transition: border-color 0.2s ease;
+}
+
+.pill.compact {
+  gap: 6px;
+  padding: 6px 8px;
+  justify-content: flex-start;
+  width: 100%;
+  overflow: hidden;
+}
+
+.pill.compact .btn-fill {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.pill-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.pill-label.timer-label {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.pill.recording-active {
+  border-color: var(--ink);
+}
+
+/* ── Brand mark (bordered avatar tile) ──────────────────── */
+.brand-mark {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+}
+
+.brand-mark.muted {
+  border-color: var(--graphite);
+  color: var(--graphite);
+}
+
+.brand-mark.recording {
+  background: var(--paper);
+  border-color: var(--signal);
+  color: var(--signal);
+}
+
+.brand-mark.success {
+  background: var(--paper);
+}
+
+.brand-mark.dock-size {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+}
+
+.brand-mark.offline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--graphite);
+  border: 1.5px solid var(--paper);
+}
+
+.pill-label.offline-label {
+  flex: 1 1 0;
+  min-width: 0;
+  color: var(--graphite);
+  font-size: 14px;
+}
+
+/* ── Status dot ─────────────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot.idle      { background: var(--graphite); }
+.dot.recording { background: var(--signal); animation: pulse 1.4s ease-in-out infinite; }
+.dot.offline   { background: var(--graphite); }
+.dot.ready     { background: var(--mint); }
+
+/* ── Waveform ───────────────────────────────────────────── */
+.waveform {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 16px;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid var(--ink);
+  flex-shrink: 0;
+}
+
+.wave-bar {
+  width: 2px;
+  height: 8px;
+  border-radius: 1px;
+  background: var(--ink);
+  animation: wave 0.9s ease-in-out infinite;
+}
+
+.wave-bar:nth-child(1) { animation-delay: 0ms; }
+.wave-bar:nth-child(2) { animation-delay: 120ms; }
+.wave-bar:nth-child(3) { animation-delay: 240ms; }
+.wave-bar:nth-child(4) { animation-delay: 360ms; }
+.wave-bar:nth-child(5) { animation-delay: 180ms; }
+
+@keyframes wave {
+  0%, 100% { height: 4px; opacity: 0.55; }
+  50%      { height: 12px; opacity: 1; }
+}
+
+/* ── Spinner ────────────────────────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-top-color: var(--ink);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+/* ── Progress ───────────────────────────────────────────── */
+.progress-bar-track {
+  height: 4px;
+  background: transparent;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--ink);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.dismiss-bar {
+  height: 100%;
+  background: var(--ink);
+  border-radius: 999px;
+  transition: width 1s linear;
+}
+
+/* ── Buttons ────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: var(--radius-pill);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  outline: none;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.btn-fill {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 32px;
+  padding: 0 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.btn svg {
+  flex-shrink: 0;
+}
+
+/* Primary action — sunshine fill, black text. */
+.btn-start {
+  background: var(--sunshine);
+  border-color: var(--sunshine);
+  color: #000000;
+}
+
+.btn-start:hover {
+  background: var(--sunshine-deep);
+  border-color: var(--sunshine-deep);
+}
+
+/* Stop — ink fill, cream text. */
+.btn-stop {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.btn-stop:hover {
+  background: #333333;
+}
+
+.btn-notion {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.btn-notion:hover {
+  background: #333333;
+}
+
+.notion-icon {
+  display: block;
+  object-fit: contain;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+}
+
+.btn-ghost:hover {
+  background: var(--ink-tint);
+}
+
+.btn-download {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+}
+
+.btn-download:hover {
+  background: var(--ink-tint);
+}
+
+/* ── Typography ─────────────────────────────────────────── */
+.timer {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  color: var(--ink);
+  padding: 2px 6px;
+  border-radius: var(--radius-input);
+  background: transparent;
+  border: 1px solid var(--ink);
+  flex-shrink: 0;
+}
+
+.state-label {
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.state-label.muted {
+  color: var(--graphite);
+  font-weight: 400;
+}
+
+.state-label.warning {
+  color: var(--signal);
+}
+
+.state-sub {
+  font-size: 14px;
+  color: var(--graphite);
+  line-height: 1.35;
+}
+
+.stage-text {
+  font-size: 14px;
+  color: var(--graphite);
+  font-weight: 500;
+}
+
+.pct-text {
+  font-size: 14px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+/* ── Success check ──────────────────────────────────────── */
+@keyframes checkIn {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.check-icon {
+  width: 22px;
+  height: 22px;
+  background: var(--mint);
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  animation: checkIn 0.25s ease-out;
+  color: #000000;
+}
+
+.check-icon svg {
+  width: 11px;
+  height: 11px;
+}
+
+/* ── Layout ─────────────────────────────────────────────── */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.flex1 { flex: 1; min-width: 0; }
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ── Close ──────────────────────────────────────────────── */
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  color: var(--graphite);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.close-btn:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+/* ── Meta chip ──────────────────────────────────────────── */
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--graphite);
+}
+
+/* ── Icon buttons ───────────────────────────────────────── */
+.icon-btn {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  color: var(--graphite);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.icon-btn:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.icon-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.icon-btn-stop {
+  color: var(--paper);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.icon-btn-stop:hover {
+  color: var(--paper);
+  background: var(--signal);
+  border-color: var(--signal);
+}
+
+.pill.has-controls {
+  padding-right: 8px;
+}
+
+/* ── Right-edge dock (collapsed) ────────────────────────── */
+.dock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  height: 52px;
+  min-height: 52px;
+  max-height: 52px;
+  padding: 8px 0 8px 6px;
+  margin: 0;
+  cursor: pointer;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-right: none;
+  border-radius: 14px 0 0 14px;
+  transition: background 0.2s ease;
+  color: inherit;
+}
+
+.dock:hover {
+  background: #efebe1;
+}
+
+.dock:active {
+  background: #e6e1d5;
+}
+
+.dock.recording-active,
+.dock.processing-active {
+  border-color: var(--ink);
+}
+
+.dock-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+.dock-icon {
+  display: block;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.dock-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dock-status.idle      { background: var(--mint); }
+.dock-status.recording { background: var(--signal); animation: pulse 1.4s ease-in-out infinite; }
+.dock-status.offline   { background: var(--graphite); }
+.dock-status.complete  { background: var(--mint); }
+
+.dock-status.processing {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-top-color: var(--ink);
+  background: transparent;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes dockIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+#overlay-root.docked {
+  padding: 0;
+  width: 100%;
+  height: 52px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,503 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Font ──────────────────────────────────────────────────────────────────── */
+/* Bundled locally (offline-safe). Subset of upstream DM Sans that keeps the
+   ss03/ss04 stylistic sets the design system relies on. OFL — see ../assets/fonts. */
+@font-face {
+  font-family: 'DM Sans';
+  src: url('../assets/fonts/DMSans-Variable.woff2') format('woff2');
+  font-weight: 100 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Design tokens (DESIGN.md — "sunlit paper notebook") ──────────────────── */
+/* Colors are RGB triplets so Tailwind can apply `/ alpha`. Components never use
+   `dark:` variants — the dark theme is derived by swapping these tokens. */
+:root {
+  --color-paper:        248 245 237;   /* #f8f5ed Cream Paper — canvas + card surface */
+  --color-ink:          0 0 0;         /* #000000 Ink — headings, hairlines */
+  --color-graphite:     112 112 112;   /* #707070 Graphite — secondary text, dividers */
+  --color-sunshine:     255 218 110;   /* #ffda6e Sunshine Highlight — the rationed CTA */
+  --color-sunshine-deep:245 202 80;    /* hover state for sunshine fills */
+  --color-on-sunshine:  0 0 0;         /* text on sunshine is always black */
+  --color-mint:         110 206 157;   /* #6ece9d Mint Signal — status dots only */
+  --color-signal:       200 65 50;     /* muted red — recording, destructive, errors */
+
+  --font-dm-sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --text-caption: 14px;
+  --text-body-sm: 16px;
+  --text-body: 18px;
+  --text-subheading: 20px;
+  --text-heading-sm: 24px;
+  --text-heading: 28px;
+  --text-display: 64px;
+  --tracking-display: -0.016em;
+  --tracking-badge: 0.286em;
+
+  --spacing-8: 8px;
+  --spacing-16: 16px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+  --spacing-48: 48px;
+  --spacing-64: 64px;
+
+  --radius-tags: 9999px;
+  --radius-cards: 24px;
+  --radius-images: 12px;
+  --radius-inputs: 6px;
+  --radius-buttons: 24px;
+
+  --page-max-width: 1200px;
+  --section-gap: 64px;
+  --card-padding: 32px;
+  --element-gap: 16px;
+
+  color-scheme: light;
+}
+
+/* Derived dark theme: same system, ink and paper swap roles. */
+.dark {
+  --color-paper:        26 24 19;      /* #1a1813 warm ink-paper */
+  --color-ink:          248 245 237;   /* cream lines and headings */
+  --color-graphite:     168 162 150;   /* #a8a296 */
+  --color-signal:       255 122 102;   /* #ff7a66 */
+  color-scheme: dark;
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: rgb(var(--color-paper));
+}
+
+body {
+  font-family: var(--font-dm-sans);
+  font-feature-settings: "ss03", "ss04";
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  background: rgb(var(--color-paper));
+  color: rgb(var(--color-ink));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+::selection {
+  background: rgb(var(--color-sunshine));
+  color: rgb(var(--color-on-sunshine));
+}
+
+/* Keyboard focus is always visible: 2px ink outline, offset from the shape. */
+:focus-visible {
+  outline: 2px solid rgb(var(--color-ink));
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* Monochrome brand marks — raw black shapes on paper (cream in dark).
+   .logo-mono flattens colour logos to a silhouette; .logo-gray is for marks that
+   are already black-and-white (Notion, Sarvam) and would lose detail as a silhouette. */
+.logo-mono { filter: grayscale(1) brightness(0); }
+.dark .logo-mono { filter: grayscale(1) brightness(0) invert(1); }
+.logo-gray { filter: grayscale(1); }
+.dark .logo-gray { filter: grayscale(1) invert(1); }
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-graphite) / 0.35);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--color-graphite) / 0.6);
+  background-clip: content-box;
+}
+
+/* ── Component classes (single source of truth for the design system) ─────── */
+@layer components {
+  /* Buttons — 24px radius, DM Sans 500. */
+  .btn {
+    @apply inline-flex items-center justify-center gap-8 rounded-button border border-transparent
+           px-24 py-16 text-body-sm font-medium leading-none whitespace-nowrap
+           cursor-pointer select-none transition-colors duration-150
+           disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  /* Sunshine Filled Button — the single primary action per view. The yellow is the same in both
+     themes, so signal red inside it (e.g. the Record dot) keeps the light-theme value rather than
+     the lighter dark-theme coral, which is too weak on yellow. Keep in sync with :root. */
+  .btn-sunshine {
+    @apply btn bg-sunshine text-on-sunshine border-sunshine
+           hover:bg-sunshine-deep hover:border-sunshine-deep;
+    --color-signal: 200 65 50;
+  }
+  /* Ink Button — derived from the Dark Filter Chip; a view's main action when yellow is spent. */
+  .btn-ink {
+    @apply btn bg-ink text-paper border-ink hover:bg-ink/80;
+  }
+  /* Ghost Ink Button — secondary action. */
+  .btn-ghost {
+    @apply btn bg-transparent text-ink border-ink hover:bg-ink/[0.06];
+  }
+  /* Quiet — text-only tertiary action. */
+  .btn-quiet {
+    @apply btn bg-transparent text-graphite hover:text-ink px-8;
+  }
+  /* Destructive — ghost in signal red. */
+  .btn-danger {
+    @apply btn bg-transparent text-signal border-signal hover:bg-signal/[0.08];
+  }
+
+  /* Compact size — declared after the variants so it wins the cascade. */
+  .btn-sm { @apply px-16 py-8 text-caption; }
+
+  .icon-btn {
+    @apply inline-flex items-center justify-center w-32 h-32 rounded-full text-graphite
+           border border-transparent hover:text-ink hover:border-ink transition-colors duration-150
+           disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  /* Icon button that grows into a labelled ghost pill on hover or keyboard focus.
+     At rest it matches .icon-btn, so it sits in a row of icon buttons. */
+  .icon-pill {
+    @apply inline-flex items-center h-32 px-8 rounded-full border border-transparent
+           text-caption font-medium leading-none whitespace-nowrap text-graphite
+           transition-[color,border-color,padding] duration-200 ease-out
+           hover:text-ink hover:border-ink hover:px-16
+           focus-visible:text-ink focus-visible:border-ink focus-visible:px-16
+           disabled:cursor-not-allowed disabled:opacity-40;
+  }
+  .icon-pill-label {
+    @apply max-w-0 ml-0 opacity-0 overflow-hidden
+           transition-[max-width,margin-left,opacity] duration-200 ease-out;
+  }
+  .icon-pill:hover .icon-pill-label,
+  .icon-pill:focus-visible .icon-pill-label {
+    @apply max-w-[160px] ml-8 opacity-100;
+  }
+
+  /* Feature Card — outline, not fill. */
+  .card {
+    @apply bg-paper border border-ink rounded-card p-32;
+  }
+  .card-compact {
+    @apply bg-paper border border-ink rounded-card p-24;
+  }
+  /* Smaller tiles and framed media — 12px radius. */
+  .tile {
+    @apply bg-paper border border-ink rounded-image;
+  }
+  /* Anything that sits "above" the page raises its border weight — never a shadow. */
+  .floating {
+    @apply bg-paper border-2 border-ink;
+  }
+
+  /* Filter Tag Pill + Dark Filter Chip. */
+  .pill {
+    @apply inline-flex items-center gap-8 rounded-full border border-ink bg-paper
+           px-16 py-4 text-caption font-medium text-ink whitespace-nowrap;
+  }
+  button.pill { @apply cursor-pointer hover:bg-ink/[0.06] transition-colors duration-150; }
+  .pill-quiet {
+    @apply inline-flex items-center gap-8 rounded-full border border-graphite/50
+           px-16 py-4 text-caption font-medium text-graphite whitespace-nowrap;
+  }
+  .chip-dark {
+    @apply inline-flex items-center gap-8 rounded-full border border-ink bg-ink
+           px-16 py-4 text-caption font-medium text-paper whitespace-nowrap;
+  }
+  button.chip-dark { @apply cursor-pointer; }
+
+  /* Numbered Step Badge — numeral cell + uppercase tracked label. */
+  .step-badge {
+    @apply inline-flex items-center gap-8 rounded-full border border-ink bg-paper pr-16
+           text-caption font-medium uppercase text-ink whitespace-nowrap;
+    letter-spacing: var(--tracking-badge);
+  }
+  .step-badge-num {
+    @apply inline-flex items-center justify-center w-24 h-24 rounded-full border-r border-ink bg-paper
+           text-caption font-medium;
+    letter-spacing: 0;
+  }
+  .step-badge-done .step-badge-num { @apply bg-ink text-paper; }
+
+  /* Small uppercase label. */
+  .eyebrow {
+    @apply text-caption font-medium uppercase text-graphite;
+    letter-spacing: var(--tracking-badge);
+  }
+
+  /* Highlighter tag — small sunshine callout fill with ink text. */
+  .highlight {
+    @apply inline-flex items-center gap-8 rounded-full bg-sunshine text-on-sunshine
+           px-8 py-4 text-caption font-medium whitespace-nowrap;
+  }
+
+  /* Status dots. */
+  .dot { @apply inline-block w-[12px] h-[12px] rounded-full flex-shrink-0; }
+  .dot-sm { @apply w-8 h-8; }
+  .dot-mint { @apply bg-mint; }
+  .dot-signal { @apply bg-signal; }
+  .dot-graphite { @apply bg-graphite; }
+  .dot-ink { @apply bg-ink; }
+  .dot-sunshine { @apply bg-sunshine border border-ink; }
+  .dot-live { animation: livePulse 1.4s ease-in-out infinite; }
+
+  /* Form inputs — 6px radius, 1px ink hairline. */
+  .input {
+    @apply w-full bg-paper border border-ink rounded-input px-16 py-8 text-body-sm text-ink
+           placeholder:text-graphite outline-none transition-colors duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .input:focus-visible,
+  .input:focus {
+    outline: 2px solid rgb(var(--color-ink));
+    outline-offset: 0;
+  }
+  /* Compact date field (Meetings filters): sized to its content, with a quiet calendar glyph. */
+  .input-date {
+    @apply w-auto px-16 py-4 text-caption tabular-nums;
+  }
+  .input-date::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 150ms;
+  }
+  .input-date::-webkit-calendar-picker-indicator:hover { opacity: 1; }
+
+  /* Small ink count on a button, e.g. "Filters 2". */
+  .count-badge {
+    @apply inline-flex items-center justify-center min-w-[20px] h-[20px] px-4 rounded-full
+           bg-ink text-paper text-caption font-medium leading-none tabular-nums;
+  }
+
+  .label {
+    @apply block text-caption font-medium text-ink mb-8;
+  }
+  .hint {
+    @apply text-caption text-graphite;
+  }
+
+  /* Subtle divider between text blocks. */
+  .rule { @apply border-t border-graphite/40; }
+
+  .page {
+    @apply mx-auto w-full max-w-[1200px] px-32 py-48;
+  }
+
+  mark, .mark {
+    @apply bg-sunshine text-on-sunshine rounded-input;
+    padding: 0 2px;
+  }
+
+  .code-box {
+    @apply tile px-16 py-8 font-mono text-caption text-ink break-all;
+  }
+}
+
+/* ── Motion ───────────────────────────────────────────────────────────────── */
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+
+@keyframes waveformBar {
+  0%, 100% { height: 4px; }
+  50%      { height: 16px; }
+}
+.wave-bar { animation: waveformBar 0.8s ease-in-out infinite alternate; }
+
+/* ── Recording bar level meters ───────────────────────────────────────────── */
+.level-meter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 16px;
+}
+.level-bars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 16px;
+}
+.level-bar {
+  width: 3px;
+  min-height: 4px;
+  border-radius: 9999px;
+  background-color: rgb(var(--color-ink));
+  /* Spring-like transition: bars bounce up quickly, settle down gently */
+  transition: height 80ms cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 120ms ease-out;
+  will-change: height, opacity;
+}
+
+/* Silence warning */
+.silence-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 24px 8px;
+  border-top: 1px solid rgb(var(--color-signal) / 0.2);
+  background: rgb(var(--color-signal) / 0.06);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { animation: spin 0.8s linear infinite; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.2s ease-out both; }
+
+@keyframes cardRemove {
+  from { opacity: 1; max-height: 320px; }
+  to   { opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; border-width: 0; }
+}
+.card-deleting {
+  animation: cardRemove 0.3s ease-in forwards;
+  overflow: hidden;
+  pointer-events: none !important;
+}
+
+/* ── Top-bar processing pill ───────────────────────────────────────────────
+   Enter: the slot widens (neighbours slide aside), then the pill glides out from behind the
+   Record button with a small springy overshoot, un-blurring as it lands.
+   Exit: the pill slips back toward Record first, then the slot closes behind it. */
+.proc-slot {
+  display: grid;
+  grid-template-columns: 0fr;
+  transition: grid-template-columns 280ms cubic-bezier(0.4, 0, 0.2, 1) 150ms;
+}
+.proc-slot.is-open {
+  grid-template-columns: 1fr;
+  transition: grid-template-columns 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.proc-slot-inner {
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: flex-end;
+  /* Vertical room for the focus ring, which overflow would clip. The gap before the pill
+     is a margin on the pill itself, so it collapses with the slot. */
+  padding: 4px 0;
+  margin: -4px 0;
+}
+.proc-pill {
+  @apply relative inline-flex items-center gap-8 rounded-full border border-ink bg-paper
+         px-16 py-4 text-caption font-medium text-ink whitespace-nowrap overflow-hidden
+         disabled:cursor-default;
+  isolation: isolate;
+  margin-left: 8px;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: translateX(28px) scale(0.9);
+  filter: blur(4px);
+  transition:
+    transform 220ms cubic-bezier(0.4, 0, 1, 1),
+    opacity 170ms ease-in,
+    filter 170ms ease-in,
+    background-color 150ms ease-out;
+}
+.proc-slot.is-open .proc-pill {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition:
+    transform 460ms cubic-bezier(0.34, 1.4, 0.64, 1) 100ms,
+    opacity 260ms ease-out 100ms,
+    filter 260ms ease-out 100ms,
+    background-color 150ms ease-out;
+}
+.proc-pill:not(:disabled):hover { background-color: rgb(var(--color-ink) / 0.04); }
+/* The pill's width eases to its content's measured width when the label or percentage
+   changes length (e.g. "Transcribing" → "Writing notes" → "Notes ready"). */
+.proc-size {
+  display: inline-flex;
+  /* Clip to the animating width, with a little slack so the popping dot keeps its round edge. */
+  overflow: clip;
+  overflow-clip-margin: 4px;
+  transition: width 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.proc-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+/* Invisible copies of each pill variant, measured to pick the one that fits the bar. */
+.proc-measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: max-content;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  visibility: hidden;
+  pointer-events: none;
+}
+.proc-measure * { animation: none !important; }
+/* Progress fills the pill from the left; turns mint when done, red on failure. */
+.proc-fill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform-origin: left center;
+  background-color: rgb(var(--color-ink) / 0.08);
+  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1), background-color 300ms ease-out;
+}
+.proc-pill.is-done .proc-fill  { background-color: rgb(var(--color-mint) / 0.28); }
+.proc-pill.is-error .proc-fill { background-color: rgb(var(--color-signal) / 0.16); }
+
+/* Each new stage label rises into place. */
+@keyframes procLabelIn {
+  from { opacity: 0; transform: translateY(6px); filter: blur(2px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+.proc-label { display: inline-block; animation: procLabelIn 300ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* The outcome dot pops in. */
+@keyframes procPop {
+  0%   { transform: scale(0); }
+  70%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+.proc-pop { animation: procPop 380ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .proc-slot, .proc-slot.is-open, .proc-pill, .proc-slot.is-open .proc-pill { transition-delay: 0ms !important; }
+  .proc-pill { filter: none; }
+}
+
+/* ── Titlebar drag region ─────────────────────────────────────────────────── */
+.titlebar-drag { -webkit-app-region: drag; }
+.titlebar-no-drag { -webkit-app-region: no-drag; }

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    @font-face {
+      font-family: 'DM Sans';
+      src: url('fonts/DMSans-Variable.woff2') format('woff2');
+      font-weight: 100 1000;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --paper: #f8f5ed;
+      --ink: #000000;
+      --graphite: #707070;
+      --sunshine: #ffda6e;
+      --sunshine-deep: #f5ca50;
+      --mint: #6ece9d;
+      --signal: #c84132;
+      color-scheme: light;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 300px;
+      font-family: 'DM Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      font-feature-settings: "ss03", "ss04";
+      font-size: 14px;
+      line-height: 1.5;
+      background: var(--paper);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 1px solid var(--ink);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Bordered avatar tile */
+    .logo {
+      width: 32px;
+      height: 32px;
+      background: var(--paper);
+      border: 1px solid var(--ink);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--ink);
+    }
+
+    .title { font-weight: 500; font-size: 16px; color: var(--ink); line-height: 1.25; }
+    .subtitle { font-size: 14px; color: var(--graphite); line-height: 1.25; }
+
+    .version-badge {
+      font-size: 14px;
+      font-weight: 500;
+      padding: 0 8px;
+      border: 1px solid var(--graphite);
+      border-radius: 9999px;
+      color: var(--graphite);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .body { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+
+    .status-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      border: 1px solid var(--ink);
+      border-radius: 9999px;
+      margin-bottom: 8px;
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot.connected    { background: var(--mint); }
+    .dot.disconnected { background: var(--graphite); }
+    .dot.recording    { background: var(--signal); animation: pulse 1.4s ease-in-out infinite; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.35; }
+    }
+
+    .status-text { font-size: 14px; font-weight: 500; color: var(--ink); }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 24px;
+      border: 1px solid transparent;
+      border-radius: 24px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+    /* Sunshine — the single primary action */
+    .btn-primary {
+      background: var(--sunshine);
+      border-color: var(--sunshine);
+      color: #000000;
+    }
+    .btn-primary:hover { background: var(--sunshine-deep); border-color: var(--sunshine-deep); }
+
+    /* Ink — stop / destructive-adjacent action */
+    .btn-ink {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--paper);
+    }
+    .btn-ink:hover { background: #333333; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--ink);
+    }
+    .btn-ghost:hover { background: rgba(0, 0, 0, 0.06); }
+
+    .footer {
+      padding: 8px 16px;
+      border-top: 1px solid var(--ink);
+      font-size: 14px;
+      color: var(--graphite);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; font-weight: 500; }
+    .footer a:hover { color: var(--graphite); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="brand">
+      <div class="logo">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/>
+        </svg>
+      </div>
+      <div>
+        <div class="title">NovaMeet</div>
+        <div class="subtitle">Meeting notes</div>
+      </div>
+    </div>
+    <span class="version-badge" id="version-badge">v0.1.0</span>
+  </div>
+
+  <div class="body">
+    <div class="status-card">
+      <div class="status-left">
+        <div class="dot disconnected" id="status-dot"></div>
+        <span class="status-text" id="status-text">Checking desktop app…</span>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="open-app-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+      </svg>
+      Open desktop app
+    </button>
+
+    <button class="btn btn-ghost" id="go-to-meet-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/>
+      </svg>
+      Open Google Meet
+    </button>
+  </div>
+
+  <div class="footer">
+    <span>Detects Meet & Zoom</span>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
