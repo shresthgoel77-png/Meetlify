@@ -13,18 +13,21 @@
   font-display: swap;
 }
 
-/* ── Design tokens (DESIGN.md — "sunlit paper notebook") ──────────────────── */
-/* Colors are RGB triplets so Tailwind can apply `/ alpha`. Components never use
-   `dark:` variants — the dark theme is derived by swapping these tokens. */
+/* ── Design tokens — Modern Professional Blue Aesthetic ───────────────────── */
+/* Colors are RGB triplets so Tailwind can apply `/ alpha`. */
 :root {
-  --color-paper:        248 245 237;   /* #f8f5ed Cream Paper — canvas + card surface */
-  --color-ink:          0 0 0;         /* #000000 Ink — headings, hairlines */
-  --color-graphite:     112 112 112;   /* #707070 Graphite — secondary text, dividers */
-  --color-sunshine:     255 218 110;   /* #ffda6e Sunshine Highlight — the rationed CTA */
-  --color-sunshine-deep:245 202 80;    /* hover state for sunshine fills */
-  --color-on-sunshine:  0 0 0;         /* text on sunshine is always black */
-  --color-mint:         110 206 157;   /* #6ece9d Mint Signal — status dots only */
-  --color-signal:       200 65 50;     /* muted red — recording, destructive, errors */
+  /* Light Mode */
+  --color-paper:           240 244 248;   /* #F0F4F8 Soft misty ice-blue page canvas */
+  --color-card:            255 255 255;   /* #FFFFFF Crisp clean white card surface */
+  --color-ink:             15 23 42;      /* #0F172A Deep obsidian navy (headings, primary text) */
+  --color-graphite:        71 85 105;     /* #475569 Muted steel-blue (secondary text, labels) */
+  --color-border-ink:      203 213 225;   /* #CBD5E1 Fine slate-blue hairlines & borders */
+  --color-border-graphite: 226 232 240;   /* #E2E8F0 Soft blue-slate dividers */
+  --color-sunshine:        37 99 235;     /* #2563EB Crisp cobalt blue CTA & active highlight */
+  --color-sunshine-deep:   29 78 216;     /* #1D4ED8 Deep royal blue hover */
+  --color-on-sunshine:     255 255 255;   /* #FFFFFF Stark white text on cobalt button */
+  --color-mint:            16 185 129;    /* #10B981 Functional emerald/teal status dot ('In Notion', live) */
+  --color-signal:          220 38 38;     /* #DC2626 Crisp crimson red (recording indicator, destructive, error) */
 
   --font-dm-sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
@@ -59,12 +62,19 @@
   color-scheme: light;
 }
 
-/* Derived dark theme: same system, ink and paper swap roles. */
+/* ── Dark Mode: Deep Obsidian/Navy Dark Blue with Sapphire Accents ───────── */
 .dark {
-  --color-paper:        26 24 19;      /* #1a1813 warm ink-paper */
-  --color-ink:          248 245 237;   /* cream lines and headings */
-  --color-graphite:     168 162 150;   /* #a8a296 */
-  --color-signal:       255 122 102;   /* #ff7a66 */
+  --color-paper:           8 12 22;       /* #080C16 Deep, rich navy/obsidian dark blue background */
+  --color-card:            13 21 39;      /* #0D1527 Deep sapphire card background */
+  --color-ink:             248 250 252;   /* #F8FAFC Stark white/silver (headings, primary text) */
+  --color-graphite:        148 163 184;   /* #94A3B8 Light icy slate-blue (secondary labels e.g. MEETINGS, RECORDED) */
+  --color-border-ink:      30 46 74;      /* #1E2E4A Fine semi-translucent sapphire blue border */
+  --color-border-graphite: 26 38 61;      /* #1A263D Semi-translucent dark sapphire dividers */
+  --color-sunshine:        37 99 235;     /* #2563EB Vibrant electric cobalt / royal-blue pill button */
+  --color-sunshine-deep:   29 78 216;     /* #1D4ED8 Deep royal blue hover */
+  --color-on-sunshine:     255 255 255;   /* #FFFFFF Stark white text on cobalt button */
+  --color-mint:            45 212 191;    /* #2DD4BF Functional teal/green status dot ('In Notion') */
+  --color-signal:          239 68 68;     /* #EF4444 Crimson recording indicator dot */
   color-scheme: dark;
 }
 
@@ -93,6 +103,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Subtle sapphire/indigo ambient backlighting in Dark Mode */
+.dark html,
+.dark body,
+.dark #root {
+  background-color: #080C16;
+  background-image:
+    radial-gradient(ellipse 90% 50% at 50% -10%, rgba(30, 58, 138, 0.20), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 95% 15%, rgba(56, 189, 248, 0.08), transparent 60%),
+    radial-gradient(ellipse 50% 30% at 5% 85%, rgba(29, 78, 216, 0.09), transparent 50%);
+  background-attachment: fixed;
+}
+
 h1, h2, h3, h4 {
   font-weight: 500;
   line-height: 1.25;
@@ -103,9 +125,13 @@ h1, h2, h3, h4 {
   color: rgb(var(--color-on-sunshine));
 }
 
-/* Keyboard focus is always visible: 2px ink outline, offset from the shape. */
+/* Keyboard focus is always visible: crisp cobalt / cyber-blue outline */
 :focus-visible {
-  outline: 2px solid rgb(var(--color-ink));
+  outline: 2px solid rgb(var(--color-sunshine));
+  outline-offset: 2px;
+}
+.dark :focus-visible {
+  outline: 2px solid #38BDF8;
   outline-offset: 2px;
 }
 :focus:not(:focus-visible) {
@@ -114,13 +140,11 @@ h1, h2, h3, h4 {
 
 .tabular { font-variant-numeric: tabular-nums; }
 
-/* Monochrome brand marks — raw black shapes on paper (cream in dark).
-   .logo-mono flattens colour logos to a silhouette; .logo-gray is for marks that
-   are already black-and-white (Notion, Sarvam) and would lose detail as a silhouette. */
-.logo-mono { filter: grayscale(1) brightness(0); }
-.dark .logo-mono { filter: grayscale(1) brightness(0) invert(1); }
-.logo-gray { filter: grayscale(1); }
-.dark .logo-gray { filter: grayscale(1) invert(1); }
+/* Cool-toned brand marks and silhouettes */
+.logo-mono { filter: grayscale(1) brightness(0.2) sepia(0.3) hue-rotate(195deg); }
+.dark .logo-mono { filter: grayscale(1) brightness(0) invert(0.95) drop-shadow(0 0 1px rgba(147, 197, 253, 0.5)); }
+.logo-gray { filter: grayscale(1) brightness(0.25) sepia(0.2) hue-rotate(195deg); }
+.dark .logo-gray { filter: grayscale(1) invert(0.95) drop-shadow(0 0 1px rgba(147, 197, 253, 0.5)); }
 
 /* ── Scrollbar ─────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -146,29 +170,63 @@ h1, h2, h3, h4 {
            disabled:cursor-not-allowed disabled:opacity-40;
   }
 
-  /* Sunshine Filled Button — the single primary action per view. The yellow is the same in both
-     themes, so signal red inside it (e.g. the Record dot) keeps the light-theme value rather than
-     the lighter dark-theme coral, which is too weak on yellow. Keep in sync with :root. */
+  /* Sunshine Filled Button — electric-cobalt or royal-blue pill button.
+     The crimson recording indicator dot stays red in both themes. */
   .btn-sunshine {
     @apply btn bg-sunshine text-on-sunshine border-sunshine
-           hover:bg-sunshine-deep hover:border-sunshine-deep;
-    --color-signal: 200 65 50;
+           hover:bg-sunshine-deep hover:border-sunshine-deep shadow-sm;
+    --color-signal: 239 68 68;
   }
-  /* Ink Button — derived from the Dark Filter Chip; a view's main action when yellow is spent. */
+  .dark .btn-sunshine {
+    --color-signal: 239 68 68;
+    box-shadow: 0 0 18px -2px rgba(37, 99, 235, 0.45);
+  }
+
+  /* Ink Button — secondary primary action. */
   .btn-ink {
-    @apply btn bg-ink text-paper border-ink hover:bg-ink/80;
+    @apply btn bg-ink text-paper border-ink hover:bg-ink/85;
   }
-  /* Ghost Ink Button — secondary action. */
+  .dark .btn-ink {
+    background-color: #1A263D;
+    color: #F8FAFC;
+    border-color: #2B4E8C;
+  }
+  .dark .btn-ink:hover:not(:disabled) {
+    background-color: #243555;
+    border-color: #3B82F6;
+    color: #FFFFFF;
+    box-shadow: 0 0 14px -2px rgba(59, 130, 246, 0.35);
+  }
+
+  /* Ghost Button — secondary action. */
   .btn-ghost {
     @apply btn bg-transparent text-ink border-ink hover:bg-ink/[0.06];
   }
+  .dark .btn-ghost {
+    border-color: rgb(var(--color-border-ink));
+    color: rgb(var(--color-ink));
+  }
+  .dark .btn-ghost:hover:not(:disabled) {
+    background-color: rgba(30, 58, 138, 0.16);
+    border-color: #2B4E8C;
+    color: #FFFFFF;
+  }
+
   /* Quiet — text-only tertiary action. */
   .btn-quiet {
     @apply btn bg-transparent text-graphite hover:text-ink px-8;
   }
+  .dark .btn-quiet:hover:not(:disabled) {
+    color: #F8FAFC;
+  }
+
   /* Destructive — ghost in signal red. */
   .btn-danger {
     @apply btn bg-transparent text-signal border-signal hover:bg-signal/[0.08];
+  }
+  .dark .btn-danger:hover:not(:disabled) {
+    background-color: rgba(239, 68, 68, 0.12);
+    border-color: #EF4444;
   }
 
   /* Compact size — declared after the variants so it wins the cascade. */
@@ -179,16 +237,26 @@ h1, h2, h3, h4 {
            border border-transparent hover:text-ink hover:border-ink transition-colors duration-150
            disabled:cursor-not-allowed disabled:opacity-40;
   }
+  .dark .icon-btn:hover:not(:disabled) {
+    color: #F8FAFC;
+    border-color: #2B4E8C;
+    background-color: rgba(30, 58, 138, 0.15);
+  }
 
-  /* Icon button that grows into a labelled ghost pill on hover or keyboard focus.
-     At rest it matches .icon-btn, so it sits in a row of icon buttons. */
+  /* Icon button that grows into a labelled ghost pill on hover or keyboard focus. */
   .icon-pill {
     @apply inline-flex items-center h-32 px-8 rounded-full border border-transparent
            text-caption font-medium leading-none whitespace-nowrap text-graphite
-           transition-[color,border-color,padding] duration-200 ease-out
+           transition-[color,border-color,padding,background-color] duration-200 ease-out
            hover:text-ink hover:border-ink hover:px-16
            focus-visible:text-ink focus-visible:border-ink focus-visible:px-16
            disabled:cursor-not-allowed disabled:opacity-40;
+  }
+  .dark .icon-pill:hover:not(:disabled),
+  .dark .icon-pill:focus-visible {
+    color: #F8FAFC;
+    border-color: #2B4E8C;
+    background-color: rgba(30, 58, 138, 0.15);
   }
   .icon-pill-label {
     @apply max-w-0 ml-0 opacity-0 overflow-hidden
@@ -201,18 +269,55 @@ h1, h2, h3, h4 {
 
   /* Feature Card — outline, not fill. */
   .card {
-    @apply bg-paper border border-ink rounded-card p-32;
+    @apply bg-paper border border-ink rounded-card p-32 transition-colors duration-150;
   }
   .card-compact {
-    @apply bg-paper border border-ink rounded-card p-24;
+    @apply bg-paper border border-ink rounded-card p-24 transition-colors duration-150;
   }
+  .card, .card-compact {
+    background-color: #FFFFFF;
+    border-color: rgb(var(--color-border-ink));
+  }
+  .card:hover, .card-compact:hover {
+    border-color: #94A3B8;
+  }
+  .dark .card, .dark .card-compact {
+    background-color: rgba(13, 21, 39, 0.75);
+    border-color: rgb(var(--color-border-ink));
+    backdrop-filter: blur(12px);
+  }
+  .dark .card:hover, .dark .card-compact:hover {
+    border-color: #2B4E8C;
+    box-shadow: 0 0 16px -4px rgba(30, 58, 138, 0.3);
+  }
+
   /* Smaller tiles and framed media — 12px radius. */
   .tile {
     @apply bg-paper border border-ink rounded-image;
   }
-  /* Anything that sits "above" the page raises its border weight — never a shadow. */
+  .tile {
+    background-color: #FFFFFF;
+    border-color: rgb(var(--color-border-ink));
+  }
+  .dark .tile {
+    background-color: rgba(13, 21, 39, 0.85);
+    border-color: rgb(var(--color-border-ink));
+  }
+
+  /* Anything that sits "above" the page raises its border weight. */
   .floating {
     @apply bg-paper border-2 border-ink;
+  }
+  .floating {
+    background-color: #FFFFFF;
+    border-color: rgb(var(--color-border-ink));
+    box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.12);
+  }
+  .dark .floating {
+    background-color: rgba(13, 21, 39, 0.96);
+    border-color: #2B4E8C;
+    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(43, 78, 140, 0.5);
+    backdrop-filter: blur(16px);
   }
 
   /* Filter Tag Pill + Dark Filter Chip. */
@@ -220,16 +325,53 @@ h1, h2, h3, h4 {
     @apply inline-flex items-center gap-8 rounded-full border border-ink bg-paper
            px-16 py-4 text-caption font-medium text-ink whitespace-nowrap;
   }
+  .pill {
+    background-color: #FFFFFF;
+    border-color: rgb(var(--color-border-ink));
+    color: rgb(var(--color-ink));
+  }
+  .dark .pill {
+    background-color: rgba(13, 21, 39, 0.8);
+    border-color: rgb(var(--color-border-ink));
+    color: rgb(var(--color-ink));
+  }
   button.pill { @apply cursor-pointer hover:bg-ink/[0.06] transition-colors duration-150; }
+  .dark button.pill:hover {
+    background-color: rgba(30, 58, 138, 0.2);
+    border-color: #2B4E8C;
+  }
   .pill-quiet {
     @apply inline-flex items-center gap-8 rounded-full border border-graphite/50
            px-16 py-4 text-caption font-medium text-graphite whitespace-nowrap;
+  }
+  .pill-quiet {
+    border-color: rgb(var(--color-border-graphite));
+    color: rgb(var(--color-graphite));
+  }
+  .dark .pill-quiet {
+    border-color: rgba(43, 78, 140, 0.45);
+    color: #94A3B8;
   }
   .chip-dark {
     @apply inline-flex items-center gap-8 rounded-full border border-ink bg-ink
            px-16 py-4 text-caption font-medium text-paper whitespace-nowrap;
   }
+  .chip-dark {
+    background-color: #0F172A;
+    border-color: #0F172A;
+    color: #F0F4F8;
+  }
+  .dark .chip-dark {
+    background-color: rgba(37, 99, 235, 0.25);
+    border-color: rgba(59, 130, 246, 0.55);
+    color: #F8FAFC;
+    box-shadow: 0 0 10px -2px rgba(37, 99, 235, 0.3);
+  }
   button.chip-dark { @apply cursor-pointer; }
+  .dark button.chip-dark:hover {
+    background-color: rgba(37, 99, 235, 0.4);
+    border-color: #60A5FA;
+  }
 
   /* Numbered Step Badge — numeral cell + uppercase tracked label. */
   .step-badge {
@@ -237,23 +379,48 @@ h1, h2, h3, h4 {
            text-caption font-medium uppercase text-ink whitespace-nowrap;
     letter-spacing: var(--tracking-badge);
   }
+  .dark .step-badge {
+    border-color: rgb(var(--color-border-ink));
+    background-color: rgba(13, 21, 39, 0.6);
+    color: rgb(var(--color-ink));
+  }
   .step-badge-num {
     @apply inline-flex items-center justify-center w-24 h-24 rounded-full border-r border-ink bg-paper
            text-caption font-medium;
     letter-spacing: 0;
   }
-  .step-badge-done .step-badge-num { @apply bg-ink text-paper; }
+  .dark .step-badge-num {
+    border-color: rgb(var(--color-border-ink));
+    background-color: rgba(13, 21, 39, 0.6);
+    color: rgb(var(--color-graphite));
+  }
+  .step-badge-done .step-badge-num {
+    @apply bg-sunshine text-on-sunshine border-sunshine;
+  }
+  .dark .step-badge-done .step-badge-num {
+    background-color: #2563EB;
+    border-color: #2563EB;
+    color: #FFFFFF;
+  }
 
   /* Small uppercase label. */
   .eyebrow {
     @apply text-caption font-medium uppercase text-graphite;
     letter-spacing: var(--tracking-badge);
   }
+  .dark .eyebrow {
+    color: #94A3B8;
+  }
 
-  /* Highlighter tag — small sunshine callout fill with ink text. */
+  /* Highlighter tag — small cobalt callout fill with white text. */
   .highlight {
     @apply inline-flex items-center gap-8 rounded-full bg-sunshine text-on-sunshine
            px-8 py-4 text-caption font-medium whitespace-nowrap;
+  }
+  .dark .highlight {
+    background-color: rgba(37, 99, 235, 0.25);
+    border: 1px solid rgba(59, 130, 246, 0.45);
+    color: #93C5FD;
   }
 
   /* Status dots. */
@@ -265,33 +432,53 @@ h1, h2, h3, h4 {
   .dot-ink { @apply bg-ink; }
   .dot-sunshine { @apply bg-sunshine border border-ink; }
   .dot-live { animation: livePulse 1.4s ease-in-out infinite; }
+  .dark .dot-mint {
+    box-shadow: 0 0 8px rgba(45, 212, 191, 0.6);
+  }
+  .dark .dot-signal {
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+  }
+  .dark .dot-sunshine {
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+  }
 
-  /* Form inputs — 6px radius, 1px ink hairline. */
+  /* Form inputs — 6px radius, 1px slate/sapphire hairline. */
   .input {
     @apply w-full bg-paper border border-ink rounded-input px-16 py-8 text-body-sm text-ink
            placeholder:text-graphite outline-none transition-colors duration-150
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
+  .input {
+    background-color: #FFFFFF;
+    border-color: rgb(var(--color-border-ink));
+  }
+  .dark .input {
+    background-color: rgba(10, 15, 29, 0.85);
+    border-color: rgb(var(--color-border-ink));
+    color: rgb(var(--color-ink));
+  }
   .input:focus-visible,
   .input:focus {
-    outline: 2px solid rgb(var(--color-ink));
+    outline: 2px solid rgb(var(--color-sunshine));
+    border-color: rgb(var(--color-sunshine));
     outline-offset: 0;
   }
-  /* Compact date field (Meetings filters): sized to its content, with a quiet calendar glyph. */
+  .dark .input:focus-visible,
+  .dark .input:focus {
+    outline: 2px solid #38BDF8;
+    border-color: #38BDF8;
+    box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.2);
+  }
+
+  /* Compact date field */
   .input-date {
     @apply w-auto px-16 py-4 text-caption tabular-nums;
   }
-  .input-date::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    opacity: 0.55;
-    transition: opacity 150ms;
-  }
-  .input-date::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 
-  /* Small ink count on a button, e.g. "Filters 2". */
+  /* Small count on a button, e.g. "Filters 2". */
   .count-badge {
     @apply inline-flex items-center justify-center min-w-[20px] h-[20px] px-4 rounded-full
-           bg-ink text-paper text-caption font-medium leading-none tabular-nums;
+           bg-sunshine text-on-sunshine text-caption font-medium leading-none tabular-nums;
   }
 
   .label {
@@ -300,9 +487,14 @@ h1, h2, h3, h4 {
   .hint {
     @apply text-caption text-graphite;
   }
+  .dark .hint {
+    color: #94A3B8;
+  }
 
   /* Subtle divider between text blocks. */
   .rule { @apply border-t border-graphite/40; }
+  .rule { border-color: rgb(var(--color-border-graphite)); }
+  .dark .rule { border-color: rgba(30, 46, 74, 0.8); }
 
   .page {
     @apply mx-auto w-full max-w-[1200px] px-32 py-48;
@@ -312,11 +504,128 @@ h1, h2, h3, h4 {
     @apply bg-sunshine text-on-sunshine rounded-input;
     padding: 0 2px;
   }
+  .dark mark, .dark .mark {
+    background-color: rgba(37, 99, 235, 0.35);
+    color: #93C5FD;
+    border-bottom: 1px solid #38BDF8;
+  }
 
   .code-box {
     @apply tile px-16 py-8 font-mono text-caption text-ink break-all;
   }
 }
+
+/* ── TopBar and Navigation Active Styling ─────────────────────────────────── */
+nav[aria-label="Main"] button[aria-current="page"] {
+  background-color: #0F172A;
+  border-color: #0F172A;
+  color: #F0F4F8;
+}
+.dark nav[aria-label="Main"] button[aria-current="page"] {
+  background-color: rgba(37, 99, 235, 0.25);
+  border-color: rgba(59, 130, 246, 0.55);
+  color: #F8FAFC;
+  box-shadow: 0 0 14px -2px rgba(37, 99, 235, 0.35);
+}
+
+div[role="tablist"] button[aria-selected="true"],
+div[role="radiogroup"] button[aria-checked="true"] {
+  background-color: #0F172A;
+  color: #F0F4F8;
+}
+.dark div[role="tablist"] button[aria-selected="true"],
+.dark div[role="radiogroup"] button[aria-checked="true"] {
+  background-color: rgba(37, 99, 235, 0.28);
+  border-color: rgba(59, 130, 246, 0.6);
+  color: #F8FAFC;
+}
+
+/* ── Form Controls (Switch, Checkbox, Progress) ───────────────────────────── */
+button[role="switch"][aria-checked="true"] {
+  background-color: #2563EB !important;
+  border-color: #2563EB !important;
+}
+.dark button[role="switch"][aria-checked="true"] {
+  background-color: #2563EB !important;
+  border-color: #38BDF8 !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+}
+button[role="switch"][aria-checked="true"] > span {
+  background-color: #FFFFFF !important;
+}
+
+button[role="checkbox"] > span[class*="bg-ink"] {
+  background-color: #2563EB !important;
+  border-color: #2563EB !important;
+  color: #FFFFFF !important;
+}
+.dark button[role="checkbox"] > span[class*="bg-ink"] {
+  background-color: #2563EB !important;
+  border-color: #38BDF8 !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.35);
+}
+
+div[role="progressbar"] > div {
+  background-color: #2563EB !important;
+}
+.dark div[role="progressbar"] {
+  border-color: #1E2E4A;
+  background-color: rgba(13, 21, 39, 0.85);
+}
+.dark div[role="progressbar"] > div {
+  background-color: #38BDF8 !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+}
+
+/* ── Calendar container / icon border and accents ─────────────────────────── */
+.calendar-icon {
+  color: #2563EB;
+  transition: color 150ms ease, filter 150ms ease;
+}
+.dark .calendar-icon {
+  color: #38BDF8;
+  filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.5));
+}
+
+.tile:has(.calendar-icon) {
+  background-color: rgba(239, 246, 255, 0.9);
+  border-color: #93C5FD;
+}
+.dark .tile:has(.calendar-icon) {
+  background-color: rgba(13, 22, 45, 0.85);
+  border-color: #1E3A8A;
+  box-shadow: 0 0 14px -2px rgba(56, 189, 248, 0.25);
+}
+.dark button:has(.calendar-icon):hover .tile:has(.calendar-icon) {
+  border-color: #38BDF8;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.4);
+}
+
+.dark section[aria-labelledby="upcoming-heading"] {
+  border-color: #1E2E4A;
+}
+
+.dark .card-compact:has(.calendar-icon) {
+  border-color: #1E3A8A;
+  background-color: rgba(13, 24, 48, 0.7);
+  box-shadow: 0 0 12px -2px rgba(56, 189, 248, 0.15);
+}
+.dark .card-compact:has(.calendar-icon):hover {
+  border-color: #2B4E8C;
+  box-shadow: 0 0 16px -2px rgba(56, 189, 248, 0.3);
+}
+
+.input-date::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.65;
+  filter: invert(0.3) sepia(1) saturate(5) hue-rotate(185deg);
+  transition: opacity 150ms;
+}
+.dark .input-date::-webkit-calendar-picker-indicator {
+  opacity: 0.85;
+  filter: invert(0.8) sepia(1) saturate(5) hue-rotate(170deg);
+}
+.input-date::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 
 /* ── Motion ───────────────────────────────────────────────────────────────── */
 @keyframes livePulse {
@@ -347,11 +656,14 @@ h1, h2, h3, h4 {
   width: 3px;
   min-height: 4px;
   border-radius: 9999px;
-  background-color: rgb(var(--color-ink));
-  /* Spring-like transition: bars bounce up quickly, settle down gently */
+  background-color: #2563EB;
   transition: height 80ms cubic-bezier(0.22, 1, 0.36, 1),
               opacity 120ms ease-out;
   will-change: height, opacity;
+}
+.dark .level-bar {
+  background-color: #38BDF8;
+  box-shadow: 0 0 4px rgba(56, 189, 248, 0.5);
 }
 
 /* Silence warning */
@@ -383,10 +695,7 @@ h1, h2, h3, h4 {
   pointer-events: none !important;
 }
 
-/* ── Top-bar processing pill ───────────────────────────────────────────────
-   Enter: the slot widens (neighbours slide aside), then the pill glides out from behind the
-   Record button with a small springy overshoot, un-blurring as it lands.
-   Exit: the pill slips back toward Record first, then the slot closes behind it. */
+/* ── Top-bar processing pill ─────────────────────────────────────────────── */
 .proc-slot {
   display: grid;
   grid-template-columns: 0fr;
@@ -401,8 +710,6 @@ h1, h2, h3, h4 {
   overflow: hidden;
   display: flex;
   justify-content: flex-end;
-  /* Vertical room for the focus ring, which overflow would clip. The gap before the pill
-     is a margin on the pill itself, so it collapses with the slot. */
   padding: 4px 0;
   margin: -4px 0;
 }
@@ -433,11 +740,9 @@ h1, h2, h3, h4 {
     background-color 150ms ease-out;
 }
 .proc-pill:not(:disabled):hover { background-color: rgb(var(--color-ink) / 0.04); }
-/* The pill's width eases to its content's measured width when the label or percentage
-   changes length (e.g. "Transcribing" → "Writing notes" → "Notes ready"). */
+
 .proc-size {
   display: inline-flex;
-  /* Clip to the animating width, with a little slack so the popping dot keeps its round edge. */
   overflow: clip;
   overflow-clip-margin: 4px;
   transition: width 320ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -448,7 +753,6 @@ h1, h2, h3, h4 {
   gap: 8px;
   flex-shrink: 0;
 }
-/* Invisible copies of each pill variant, measured to pick the one that fits the bar. */
 .proc-measure {
   position: absolute;
   top: 0;
@@ -461,7 +765,7 @@ h1, h2, h3, h4 {
   pointer-events: none;
 }
 .proc-measure * { animation: none !important; }
-/* Progress fills the pill from the left; turns mint when done, red on failure. */
+
 .proc-fill {
   position: absolute;
   inset: 0;
@@ -470,17 +774,18 @@ h1, h2, h3, h4 {
   background-color: rgb(var(--color-ink) / 0.08);
   transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1), background-color 300ms ease-out;
 }
+.dark .proc-fill { background-color: rgba(56, 189, 248, 0.15); }
 .proc-pill.is-done .proc-fill  { background-color: rgb(var(--color-mint) / 0.28); }
+.dark .proc-pill.is-done .proc-fill { background-color: rgba(45, 212, 191, 0.25); }
 .proc-pill.is-error .proc-fill { background-color: rgb(var(--color-signal) / 0.16); }
+.dark .proc-pill.is-error .proc-fill { background-color: rgba(239, 68, 68, 0.2); }
 
-/* Each new stage label rises into place. */
 @keyframes procLabelIn {
   from { opacity: 0; transform: translateY(6px); filter: blur(2px); }
   to   { opacity: 1; transform: none; filter: none; }
 }
 .proc-label { display: inline-block; animation: procLabelIn 300ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 
-/* The outcome dot pops in. */
 @keyframes procPop {
   0%   { transform: scale(0); }
   70%  { transform: scale(1.25); }

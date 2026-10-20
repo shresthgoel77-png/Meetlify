@@ -9,15 +9,18 @@ Source measurements are normalized; roles and recommendations are interpreted. F
 
 Pirsch uses a warm paper-notebook language: a soft cream canvas (#f8f5ed) replaces the usual SaaS white, and the only chromatic punctuation is a sunshine yellow (#ffda6e) that reads as a highlighter, not a brand stamp. Almost the entire interface is achromatic — ink-black text and 1px hairline borders do the structural work that shadows and fills do elsewhere. Typography is a single family (DM Sans) running from a whisper at 14px to a commanding 64px display, with generous 8px-grid breathing room and unusually rounded 24px corners that make cards feel like sticky notes. Green (#6ece9d) appears sparingly as a status/availability signal (happy-customer badge, theme-toggle dot) and never competes with yellow. The overall feel is editorial and tactile — closer to a printed report than a dashboard.
 
-## Tokens — Colors
+## Tokens — Colors (Modern Professional Blue Aesthetic)
 
-| Name               | Value       | Token                          | Role                                                                                              |
-| ------------------ | ----------- | ------------------------------ | ------------------------------------------------------------------------------------------------- |
-| Sunshine Highlight | `#ffda6e` | `--color-sunshine-highlight` | Primary action fill, step badges, accent highlights, callout backgrounds                          |
-| Mint Signal        | `#6ece9d` | `--color-mint-signal`        | Green action color for filled buttons, selected navigation states, and focused conversion moments |
-| Cream Paper        | `#f8f5ed` | `--color-cream-paper`        | Page canvas, card surfaces, pill interiors                                                        |
-| Ink                | `#000000` | `--color-ink`                | Primary headings, body text, 1px hairline borders on cards, images, and dividers                  |
-| Graphite           | `#707070` | `--color-graphite`           | Secondary body text, link text, muted borders and dividers                                        |
+| Name               | Light Mode  | Dark Mode   | Token                          | Role                                                                                              |
+| ------------------ | ----------- | ----------- | ------------------------------ | ------------------------------------------------------------------------------------------------- |
+| Cobalt Action      | `#2563EB`   | `#2563EB`   | `--color-sunshine`             | Primary action fill (Record button), step badges, active highlights, callouts                     |
+| Royal Blue Hover   | `#1D4ED8`   | `#1D4ED8`   | `--color-sunshine-deep`        | Hover state for primary cobalt button fills                                                       |
+| Canvas Surface     | `#F0F4F8`   | `#080C16`   | `--color-paper`                | Page canvas background (soft misty ice-blue in light, obsidian navy in dark with ambient light)   |
+| Ink (Headings)     | `#0F172A`   | `#F8FAFC`   | `--color-ink`                  | Primary headings and base body typography (deep obsidian navy in light, stark silver-white in dark)|
+| Steel/Slate Labels | `#475569`   | `#94A3B8`   | `--color-graphite`             | Secondary text, metadata, uppercase labels ('MEETINGS', 'RECORDED', counts)                       |
+| Hairline Borders   | `#CBD5E1`   | `#1E2E4A`   | `--color-border-ink`           | Fine slate-blue (light) and semi-translucent sapphire blue (dark) card/component outlines         |
+| Mint/Teal Signal   | `#10B981`   | `#2DD4BF`   | `--color-mint`                 | Functional status signal ('In Notion', live indicators, ready pills)                              |
+| Crimson Signal     | `#DC2626`   | `#EF4444`   | `--color-signal`               | Recording indicator dot, destructive actions, and critical alerts                                 |
 
 ## Tokens — Typography
 

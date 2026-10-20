@@ -13,7 +13,7 @@ export default function GoogleCalendarIcon({ size = 16, className = '', title })
       stroke="currentColor"
       strokeWidth="1.75"
       strokeLinejoin="round"
-      className={`inline-block shrink-0 ${className}`.trim()}
+      className={`inline-block shrink-0 calendar-icon ${className}`.trim()}
       role={title ? 'img' : undefined}
       aria-label={title}
       aria-hidden={title ? undefined : true}

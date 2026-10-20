@@ -11,14 +11,14 @@
 
 /* Design tokens — "sunlit paper notebook" (matches the desktop app). */
 :root {
-  --paper:         #f8f5ed;   /* Cream Paper — surface */
-  --ink:           #000000;   /* Ink — text + hairlines */
-  --graphite:      #707070;   /* Graphite — secondary text */
-  --sunshine:      #ffda6e;   /* Sunshine Highlight — the one primary action */
-  --sunshine-deep: #f5ca50;
-  --mint:          #6ece9d;   /* Mint Signal — status only */
-  --signal:        #c84132;   /* Signal red — recording / errors */
-  --ink-tint:      rgba(0, 0, 0, 0.06);
+  --paper:         #F0F4F8;   /* Soft misty ice-blue surface */
+  --ink:           #0F172A;   /* Deep obsidian navy */
+  --graphite:      #475569;   /* Steel-blue */
+  --sunshine:      #2563EB;   /* Crisp cobalt blue */
+  --sunshine-deep: #1D4ED8;   /* Royal blue hover */
+  --mint:          #10B981;   /* Mint/teal signal */
+  --signal:        #DC2626;   /* Crimson red */
+  --ink-tint:      rgba(15, 23, 42, 0.06);
 
   --radius-pill:   9999px;
   --radius-tile:   12px;
@@ -551,11 +551,11 @@ button:focus-visible {
 }
 
 .dock:hover {
-  background: #efebe1;
+  background: #E2E8F0;
 }
 
 .dock:active {
-  background: #e6e1d5;
+  background: #CBD5E1;
 }
 
 .dock.recording-active,

@@ -18,8 +18,8 @@
        Colours are local copies of --color-paper / --color-ink; the preload sets <html class="dark|light">. -->
   <style>
     #splash {
-      --splash-paper: #f8f5ed;
-      --splash-ink: #000000;
+      --splash-paper: #F0F4F8;
+      --splash-ink: #0F172A;
       position: fixed; inset: 0; z-index: 9999;
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px;
       background: var(--splash-paper); color: var(--splash-ink);
@@ -27,7 +27,7 @@
       font-feature-settings: "ss03", "ss04";
       transition: opacity 280ms ease-out;
     }
-    html.dark #splash { --splash-paper: #1a1813; --splash-ink: #f8f5ed; }
+    html.dark #splash { --splash-paper: #080C16; --splash-ink: #F8FAFC; }
     /* Held on its first (empty) frame until main.jsx adds .splash-play, which it does once the window
        is actually on screen: the window is created hidden, so the draw would otherwise run unseen. */
     #splash:not(.splash-play), #splash:not(.splash-play) * { animation-play-state: paused !important; }

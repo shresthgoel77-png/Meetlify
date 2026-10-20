@@ -212,7 +212,7 @@ function resolveEffectiveTheme(themeSetting) {
 // Window background painted before the renderer's first frame — must match the
 // theme the renderer is about to apply, otherwise the window flashes.
 function resolveStartupBackgroundColor(themeSetting) {
-  return resolveEffectiveTheme(themeSetting) === 'light' ? '#f8f5ed' : '#1a1813';  // matches --color-paper
+  return resolveEffectiveTheme(themeSetting) === 'light' ? '#F0F4F8' : '#080C16';  // matches --color-paper
 }
 
 function createMainWindow() {
