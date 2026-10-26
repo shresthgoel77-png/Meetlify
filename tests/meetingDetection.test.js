@@ -125,8 +125,8 @@ describe('reduceTick', () => {
     expect(teams.events[0].meeting).toMatchObject({ platform: 'teams', title: 'Sprint planning' });
   });
 
-  it('ignores MeetMind itself holding the mic', () => {
-    const { events } = run(Array(3).fill({ micExes: ['meetmind.exe'], windows: [], selfExe: 'MeetMind.exe' }));
+  it('ignores NovaMeet itself holding the mic', () => {
+    const { events } = run(Array(3).fill({ micExes: ['novameet.exe'], windows: [], selfExe: 'NovaMeet.exe' }));
     expect(events).toEqual([]);
   });
 

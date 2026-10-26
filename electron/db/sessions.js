@@ -8,7 +8,7 @@ let SQL = null;
 
 function getDbPath() {
   const userData = app.getPath('userData');
-  return path.join(userData, 'meetmind.db');
+  return path.join(userData, 'novameet.db');
 }
 
 function persist() {

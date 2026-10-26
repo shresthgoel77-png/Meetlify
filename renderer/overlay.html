@@ -9,7 +9,7 @@
   <!-- Apply the theme before the first paint (the overlay preload passes the effective theme). -->
   <script>
     try {
-      var t = window.meetmindOverlay && window.meetmindOverlay.startupTheme;
+      var t = window.novameetOverlay && window.novameetOverlay.startupTheme;
       document.documentElement.classList.add(t === 'dark' ? 'dark' : 'light');
     } catch (e) { /* theme is cosmetic */ }
   </script>

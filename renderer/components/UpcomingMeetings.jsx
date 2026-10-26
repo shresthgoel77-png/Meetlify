@@ -16,7 +16,7 @@ import { useNow } from '../lib/hooks.js';
 
 const POLL_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 const SOON_WINDOW_MS = 15 * 60 * 1000;
-const COLLAPSED_KEY = 'meetmind.upcomingCollapsed';
+const COLLAPSED_KEY = 'novameet.upcomingCollapsed';
 
 function getEventStatus(event, now) {
   const start = new Date(event.start).getTime();
@@ -108,7 +108,7 @@ function EventCard({ event, onStartRecording, isRecording, now }) {
           {event.meetingLink && (
             <button
               type="button"
-              onClick={() => window.meetmind.shell.openExternal(event.meetingLink)}
+              onClick={() => window.novameet.shell.openExternal(event.meetingLink)}
               className="btn-ghost btn-sm"
             >
               <ExternalLink size={14} strokeWidth={1.75} />
@@ -155,7 +155,7 @@ export default function UpcomingMeetings({ onNavigateToSettings, onStartRecordin
   const now = useNow(60_000);
 
   const fetchEvents = useCallback(async (showRefreshState = false) => {
-    if (!window.meetmind?.calendar) {
+    if (!window.novameet?.calendar) {
       setConnected(false);
       setLoading(false);
       return;
@@ -164,7 +164,7 @@ export default function UpcomingMeetings({ onNavigateToSettings, onStartRecordin
     if (showRefreshState) setRefreshing(true);
 
     try {
-      const status = await window.meetmind.calendar.getStatus();
+      const status = await window.novameet.calendar.getStatus();
       setConnected(status.connected);
 
       if (!status.connected) {
@@ -172,7 +172,7 @@ export default function UpcomingMeetings({ onNavigateToSettings, onStartRecordin
         return;
       }
 
-      const result = await window.meetmind.calendar.getEvents();
+      const result = await window.novameet.calendar.getEvents();
       if (result.success) {
         setEvents(result.events || []);
         setError(null);
@@ -281,7 +281,7 @@ export default function UpcomingMeetings({ onNavigateToSettings, onStartRecordin
                       {errorUrl && (
                         <button
                           type="button"
-                          onClick={() => window.meetmind.shell.openExternal(errorUrl)}
+                          onClick={() => window.novameet.shell.openExternal(errorUrl)}
                           className="btn-ghost btn-sm"
                         >
                           <ExternalLink size={14} strokeWidth={1.75} />

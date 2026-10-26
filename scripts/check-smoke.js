@@ -1,6 +1,6 @@
 /**
  * Checks the output of a packaged app's `--smoke` self-test (electron/smoke.js): finds the
- * `MEETMIND_SMOKE {json}` line, prints each check, adds a table to the GitHub Actions job summary
+ * `NOVAMEET_SMOKE {json}` line, prints each check, adds a table to the GitHub Actions job summary
  * when $GITHUB_STEP_SUMMARY is set, and exits 1 unless every check passed.
  *
  * Run: node scripts/check-smoke.js <file with the app's stdout> [label]
@@ -10,7 +10,7 @@
 
 const fs = require('fs');
 
-const MARKER = 'MEETMIND_SMOKE ';
+const MARKER = 'NOVAMEET_SMOKE ';
 
 function parseReport(text) {
   const line = text.split(/\r?\n/).find((l) => l.startsWith(MARKER));
@@ -29,7 +29,7 @@ function summaryMarkdown(report, label) {
   return [
     `### Smoke test${label ? `: ${label}` : ''} — ${report.ok ? 'passed' : 'FAILED'}`,
     '',
-    `MeetMind ${report.version} · ${report.platform} ${report.arch}${report.packaged ? ' · packaged' : ''}`,
+    `NovaMeet ${report.version} · ${report.platform} ${report.arch}${report.packaged ? ' · packaged' : ''}`,
     '',
     '| | Check | Detail |',
     '| --- | --- | --- |',

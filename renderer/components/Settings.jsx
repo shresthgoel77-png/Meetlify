@@ -17,7 +17,7 @@ const TABS = [
   { value: 'system', label: 'System', icon: Cpu },
 ];
 
-const TAB_STORAGE_KEY = 'meetmind.settingsTab';
+const TAB_STORAGE_KEY = 'novameet.settingsTab';
 
 function readStoredTab() {
   try {
@@ -125,16 +125,16 @@ export default function Settings({ onSave }) {
 
   useEffect(() => {
     async function load() {
-      if (!window.meetmind) return;
+      if (!window.novameet) return;
       if (!providers) return; // descriptors decide which credential fields exist
-      const cfg = await window.meetmind.config.get();
+      const cfg = await window.novameet.config.get();
       if (cfg) {
         // Prefer the OS-level startup state over the stored config so the
         // toggle reflects reality even if the user disabled startup from
         // Task Manager or the registry entry was removed.
-        if (window.meetmind.config.autoLaunchStatus) {
+        if (window.novameet.config.autoLaunchStatus) {
           try {
-            const status = await window.meetmind.config.autoLaunchStatus();
+            const status = await window.novameet.config.autoLaunchStatus();
             if (!status.isDev) {
               cfg.autoLaunch = status.openAtLogin;
             }
@@ -145,16 +145,16 @@ export default function Settings({ onSave }) {
         setInitialForm(loadedForm);
       }
 
-      if (window.meetmind.gemini?.getDefaultSystemPrompt) {
+      if (window.novameet.gemini?.getDefaultSystemPrompt) {
         try {
-          const defP = await window.meetmind.gemini.getDefaultSystemPrompt();
+          const defP = await window.novameet.gemini.getDefaultSystemPrompt();
           if (defP) setDefaultSystemPrompt(defP);
         } catch {}
       }
 
-      if (window.meetmind.gemini?.getMdDefaultSystemPrompt) {
+      if (window.novameet.gemini?.getMdDefaultSystemPrompt) {
         try {
-          const defMdP = await window.meetmind.gemini.getMdDefaultSystemPrompt();
+          const defMdP = await window.novameet.gemini.getMdDefaultSystemPrompt();
           if (defMdP) setDefaultMdSystemPrompt(defMdP);
         } catch {}
       }

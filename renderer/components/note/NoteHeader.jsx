@@ -71,7 +71,7 @@ function metaChips(session, notes, providers) {
         key="host"
         type="button"
         className="pill-quiet hover:text-ink hover:border-ink transition-colors"
-        onClick={() => window.meetmind?.shell?.openExternal(session.meeting_url)}
+        onClick={() => window.novameet?.shell?.openExternal(session.meeting_url)}
         title={`Open ${session.meeting_url}`}
       >
         {platform?.icon && (
@@ -111,7 +111,7 @@ function NotionMenu({ notionUrl, uploading, updateDisabled, updateTitle, onUpdat
     >
       <MenuItem
         icon={<ExternalLink size={14} strokeWidth={1.75} aria-hidden="true" />}
-        onSelect={() => window.meetmind.shell.openExternal(notionUrl)}
+        onSelect={() => window.novameet.shell.openExternal(notionUrl)}
       >
         Open in Notion
       </MenuItem>

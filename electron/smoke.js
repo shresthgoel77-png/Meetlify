@@ -1,6 +1,6 @@
-// `MeetMind --smoke` (or `electron . --smoke`): a headless self-test of a packaged app, run by CI
+// `NovaMeet --smoke` (or `electron . --smoke`): a headless self-test of a packaged app, run by CI
 // on the macOS and Windows builds since there is no Mac to click through. Uses a throwaway
-// profile, never opens a window, prints one line `MEETMIND_SMOKE {json}` and exits 0 if every
+// profile, never opens a window, prints one line `NOVAMEET_SMOKE {json}` and exits 0 if every
 // check passed, 1 otherwise.
 //
 // Checks: config + database open; ffmpeg/ffprobe are found and run; ffmpeg encodes a 1 s Opus
@@ -14,7 +14,7 @@ const os = require('os');
 const path = require('path');
 const { spawn } = require('child_process');
 
-const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'meetmind-smoke-'));
+const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'novameet-smoke-'));
 app.setPath('userData', profile);
 app.dock?.hide();
 
@@ -98,7 +98,7 @@ app.whenReady().then(async () => {
 
   const ok = checks.every((c) => c.ok);
   const report = { ok, version: app.getVersion(), platform: process.platform, arch: process.arch, packaged: app.isPackaged, checks };
-  process.stdout.write(`MEETMIND_SMOKE ${JSON.stringify(report)}\n`);
+  process.stdout.write(`NOVAMEET_SMOKE ${JSON.stringify(report)}\n`);
   try { fs.rmSync(profile, { recursive: true, force: true }); } catch { /* temp dir */ }
   app.exit(ok ? 0 : 1);
 });

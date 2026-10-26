@@ -34,7 +34,7 @@ function tryListen(port, handlers) {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
         });
-        res.end(JSON.stringify({ ok: true, app: 'MeetMind' }));
+        res.end(JSON.stringify({ ok: true, app: 'NovaMeet' }));
         return;
       }
 
@@ -141,7 +141,7 @@ async function startWebSocketServer(port, handlers) {
 
   logger.error('WebSocket server failed: all ports in use', {
     ports: `${port}–${port + PORT_RANGE - 1}`,
-    hint: 'Close other MeetMind instances or free one of these ports.',
+    hint: 'Close other NovaMeet instances or free one of these ports.',
   });
   throw lastErr || new Error('Could not bind WebSocket server');
 }

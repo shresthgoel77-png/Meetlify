@@ -23,7 +23,7 @@ import { IconButton, SegmentedControl, Skeleton } from './ui/index.jsx';
 const MAX_LOGS = 2000;
 const NEAR_BOTTOM_PX = 48;
 const FALLBACK_POLL_MS = 3000;
-const HIDE_EXT_KEY = 'meetmind:hide-extension-logs';
+const HIDE_EXT_KEY = 'novameet:hide-extension-logs';
 
 const LEVELS = [
   { value: 'ALL',   label: 'All',   icon: Layers },
@@ -113,7 +113,7 @@ const capped = (list) => (list.length > MAX_LOGS ? list.slice(-MAX_LOGS) : list)
 
 export default function LogsViewer() {
   const { confirm, addToast } = useApp();
-  const bridge = typeof window !== 'undefined' ? window.meetmind : null;
+  const bridge = typeof window !== 'undefined' ? window.novameet : null;
   const hasLogsApi = !!bridge?.logs;
   const hasPush = !!bridge?.on;
 
@@ -153,11 +153,11 @@ export default function LogsViewer() {
   }, [isLive]);
 
   const loadLogs = useCallback(async () => {
-    if (!window.meetmind?.logs) return;
+    if (!window.novameet?.logs) return;
     try {
-      const raw = window.meetmind.logs.getHistory
-        ? await window.meetmind.logs.getHistory()
-        : await window.meetmind.logs.get();
+      const raw = window.novameet.logs.getHistory
+        ? await window.novameet.logs.getHistory()
+        : await window.novameet.logs.get();
       if (Array.isArray(raw)) {
         setLogs(capped(raw.map(normalizeEntry)));
       }
@@ -176,8 +176,8 @@ export default function LogsViewer() {
   useEffect(() => {
     loadLogs();
 
-    if (!window.meetmind?.on) return undefined;
-    const unsub = window.meetmind.on('log:entry', (entry) => {
+    if (!window.novameet?.on) return undefined;
+    const unsub = window.novameet.on('log:entry', (entry) => {
       if (!entry) return;
       const normalized = normalizeEntry(entry);
       if (!isLiveRef.current) {
@@ -264,7 +264,7 @@ export default function LogsViewer() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `meetmind-logs-${new Date().toISOString().slice(0, 10)}.log`;
+    a.download = `novameet-logs-${new Date().toISOString().slice(0, 10)}.log`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -278,8 +278,8 @@ export default function LogsViewer() {
     });
     if (!ok) return;
     try {
-      if (window.meetmind?.logs?.clear) {
-        await window.meetmind.logs.clear();
+      if (window.novameet?.logs?.clear) {
+        await window.novameet.logs.clear();
       }
       pausedBufferRef.current = [];
       setPausedCount(0);
@@ -290,10 +290,10 @@ export default function LogsViewer() {
   };
 
   const handleOpenLogFolder = async () => {
-    if (!window.meetmind?.logs?.openFolder) return;
+    if (!window.novameet?.logs?.openFolder) return;
     setOpeningLogDir(true);
     try {
-      await window.meetmind.logs.openFolder();
+      await window.novameet.logs.openFolder();
     } finally {
       setOpeningLogDir(false);
     }

@@ -48,16 +48,16 @@ export default function SystemSection({ active }) {
 
   useEffect(() => {
     async function load() {
-      if (!window.meetmind) return;
-      if (window.meetmind.app?.getVersion) {
+      if (!window.novameet) return;
+      if (window.novameet.app?.getVersion) {
         try {
-          const v = await window.meetmind.app.getVersion();
+          const v = await window.novameet.app.getVersion();
           if (v) setAppVersion(v);
         } catch {}
       }
-      if (window.meetmind.updater) {
+      if (window.novameet.updater) {
         try {
-          setUpdaterStatus(await window.meetmind.updater.getStatus());
+          setUpdaterStatus(await window.novameet.updater.getStatus());
         } catch {}
       }
     }
@@ -67,8 +67,8 @@ export default function SystemSection({ active }) {
   // Live updater state (checking/downloading/downloaded/error) pushed from the main process,
   // so progress and status reflect background checks too — not just ones this screen triggered.
   useEffect(() => {
-    if (!window.meetmind?.on) return;
-    const unsubscribe = window.meetmind.on('updater:status', (status) => {
+    if (!window.novameet?.on) return;
+    const unsubscribe = window.novameet.on('updater:status', (status) => {
       setUpdaterStatus(status);
       if (status?.status !== 'checking') setCheckingUpdates(false);
       if (status?.status !== 'downloading') setDownloadingUpdate(false);
@@ -77,19 +77,19 @@ export default function SystemSection({ active }) {
   }, []);
 
   useEffect(() => {
-    if (!window.meetmind?.ffmpeg?.onProgress) return;
-    const unsub = window.meetmind.ffmpeg.onProgress((data) => {
+    if (!window.novameet?.ffmpeg?.onProgress) return;
+    const unsub = window.novameet.ffmpeg.onProgress((data) => {
       setFfmpegInstallProgress(data);
     });
     return () => unsub && unsub();
   }, []);
 
   const handleCheckFfmpeg = async () => {
-    if (!window.meetmind?.ffmpeg) return;
+    if (!window.novameet?.ffmpeg) return;
     setCheckingFfmpeg(true);
     setFfmpegStatus(null);
     try {
-      const result = await window.meetmind.ffmpeg.check();
+      const result = await window.novameet.ffmpeg.check();
       setFfmpegStatus(result);
     } catch (err) {
       setFfmpegStatus({ ffmpeg: { found: false }, ffprobe: { found: false }, error: err.message });
@@ -107,14 +107,14 @@ export default function SystemSection({ active }) {
   }, [active]);
 
   const handleInstallFfmpeg = async () => {
-    if (!window.meetmind?.ffmpeg || installingFfmpeg) return;
+    if (!window.novameet?.ffmpeg || installingFfmpeg) return;
     setInstallingFfmpeg(true);
     setFfmpegInstallProgress({ stage: 'download', percent: 0, message: 'Preparing…' });
     try {
-      const result = await window.meetmind.ffmpeg.install();
+      const result = await window.novameet.ffmpeg.install();
       if (result.success) {
         // Re-check status after successful install
-        const checked = await window.meetmind.ffmpeg.check();
+        const checked = await window.novameet.ffmpeg.check();
         setFfmpegStatus(checked);
       }
     } catch (err) {
@@ -125,12 +125,12 @@ export default function SystemSection({ active }) {
   };
 
   const handleCheckUpdates = async () => {
-    if (!window.meetmind?.updater) return;
+    if (!window.novameet?.updater) return;
     setCheckingUpdates(true);
     try {
       // Result state is picked up via the live 'updater:status' subscription; this call
       // just kicks the check off (and never triggers a download — that's a separate step).
-      await window.meetmind.updater.check();
+      await window.novameet.updater.check();
     } finally {
       setCheckingUpdates(false);
     }
@@ -139,12 +139,12 @@ export default function SystemSection({ active }) {
   // Check for updates each time the System tab opens, unless one ran moments ago or an
   // update is already found/in progress (re-checking would hide its Download/Restart button).
   useEffect(() => {
-    if (!active || !window.meetmind?.updater) return;
+    if (!active || !window.novameet?.updater) return;
     let cancelled = false;
     (async () => {
       let status = null;
       try {
-        status = await window.meetmind.updater.getStatus();
+        status = await window.novameet.updater.getStatus();
       } catch {}
       if (cancelled) return;
       if (status) setUpdaterStatus(status);
@@ -157,10 +157,10 @@ export default function SystemSection({ active }) {
   }, [active]);
 
   const handleDownloadUpdate = async () => {
-    if (!window.meetmind?.updater) return;
+    if (!window.novameet?.updater) return;
     setDownloadingUpdate(true);
     try {
-      const result = await window.meetmind.updater.download();
+      const result = await window.novameet.updater.download();
       if (result && result.success === false) {
         setUpdaterStatus((prev) => ({ ...prev, status: 'error', errorMessage: result.error }));
       }
@@ -362,7 +362,7 @@ export default function SystemSection({ active }) {
             )}
 
             {updaterStatus?.status === 'downloaded' && (
-              <button type="button" onClick={() => window.meetmind.updater?.install()} className="btn-ink btn-sm">
+              <button type="button" onClick={() => window.novameet.updater?.install()} className="btn-ink btn-sm">
                 Restart &amp; install
               </button>
             )}

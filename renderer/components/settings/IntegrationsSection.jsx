@@ -22,9 +22,9 @@ export default function IntegrationsSection({ form, onChange }) {
 
   useEffect(() => {
     async function loadCalendarStatus() {
-      if (!window.meetmind?.calendar?.getStatus) return;
+      if (!window.novameet?.calendar?.getStatus) return;
       try {
-        const status = await window.meetmind.calendar.getStatus();
+        const status = await window.novameet.calendar.getStatus();
         setCalendarStatus(status);
       } catch {}
     }
@@ -35,7 +35,7 @@ export default function IntegrationsSection({ form, onChange }) {
     setTestingNotion(true);
     setNotionResult(null);
     try {
-      const result = await window.meetmind.notion.testConnection(form.notionApiKey, form.notionDatabaseId);
+      const result = await window.novameet.notion.testConnection(form.notionApiKey, form.notionDatabaseId);
       setNotionResult(result);
     } catch (err) {
       setNotionResult({ success: false, error: err.message });
@@ -53,11 +53,11 @@ export default function IntegrationsSection({ form, onChange }) {
     setCalendarError(null);
     try {
       // Save credentials first so the main process can use them
-      await window.meetmind.config.setMultiple({
+      await window.novameet.config.setMultiple({
         googleCalendarClientId: form.googleCalendarClientId,
         googleCalendarClientSecret: form.googleCalendarClientSecret,
       });
-      const result = await window.meetmind.calendar.auth();
+      const result = await window.novameet.calendar.auth();
       if (result.success) {
         setCalendarStatus({ connected: true, email: result.email || '' });
       } else {
@@ -79,7 +79,7 @@ export default function IntegrationsSection({ form, onChange }) {
     });
     if (!ok) return;
     try {
-      await window.meetmind.calendar.disconnect();
+      await window.novameet.calendar.disconnect();
       setCalendarStatus({ connected: false, email: '' });
       setCalendarError(null);
     } catch (err) {

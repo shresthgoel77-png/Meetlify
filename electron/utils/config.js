@@ -160,7 +160,7 @@ for (const field of providerConfigKeys()) {
   schema[field.configKey] = { type: 'string', default: '' };
 }
 
-const store = new Store({ schema, name: 'meetmind-config' });
+const store = new Store({ schema, name: 'novameet-config' });
 
 function applyLegacyMigration() {
   const raw = {

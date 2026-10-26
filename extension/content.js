@@ -1,5 +1,5 @@
 /**
- * MeetMind Content Script
+ * NovaMeet Content Script
  * Injected into Google Meet and Zoom pages.
  * Manages the overlay iframe lifecycle.
  */
@@ -64,7 +64,7 @@ function injectOverlay(config = {}) {
   if (overlayFrame) return; // Already injected
 
   overlayFrame = document.createElement('iframe');
-  overlayFrame.id = 'meetmind-overlay-frame';
+  overlayFrame.id = 'novameet-overlay-frame';
   overlayFrame.src = chrome.runtime.getURL('overlay/overlay.html');
   overlayFrame.allow = '';
   overlayFrame.allowFullscreen = false;

@@ -4,7 +4,7 @@ import { StatusDot } from '../ui/index.jsx';
 import { KEY_GUIDES } from './data.js';
 
 export function openExternal(url) {
-  window.meetmind?.shell?.openExternal(url);
+  window.novameet?.shell?.openExternal(url);
 }
 
 // ── Group card: a titled section of settings ──────────────────────────────────

@@ -32,8 +32,8 @@ export default function PasteTranscriptModal({ onClose }) {
 
   // Track live processing stage from the existing IPC event
   useEffect(() => {
-    if (!window.meetmind?.on) return;
-    const unsub = window.meetmind.on('processing:progress', ({ stage }) => {
+    if (!window.novameet?.on) return;
+    const unsub = window.novameet.on('processing:progress', ({ stage }) => {
       setProgressLabel(STAGE_LABELS[stage] || 'Processing');
     });
     return unsub;
@@ -56,7 +56,7 @@ export default function PasteTranscriptModal({ onClose }) {
     setErrorMessage('');
 
     try {
-      const result = await window.meetmind.sessions.createFromTranscript({
+      const result = await window.novameet.sessions.createFromTranscript({
         title: title.trim() || defaultTitle(),
         transcriptText: trimmed,
       });
@@ -66,7 +66,7 @@ export default function PasteTranscriptModal({ onClose }) {
       // Notes are generated in the background; the top-bar chip follows progress.
       trackProcessing(result.sessionId);
       await refreshSessions();
-      const session = await window.meetmind.sessions.get(result.sessionId);
+      const session = await window.novameet.sessions.get(result.sessionId);
       onClose();
       if (session) openSession(session);
     } catch (err) {

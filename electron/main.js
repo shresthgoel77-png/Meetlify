@@ -35,7 +35,7 @@ const isMac = process.platform === 'darwin';
 // ── Auto-launch helpers ──────────────────────────────────────────────────────
 // On Windows + NSIS, Electron writes to HKCU\…\Run. The registry key name is
 // derived from `name` (defaults to `app.name`, which is "Electron" in dev and
-// "meetmind" in production). Passing an explicit `name` keeps the key stable
+// "novameet" in production). Passing an explicit `name` keeps the key stable
 // across dev / prod.  We also skip the call entirely in dev mode so `pnpm run
 // dev` never writes a broken startup entry pointing at the dev electron binary.
 
@@ -131,31 +131,31 @@ if (!gotSingleInstanceLock) {
 } else {
   app.on('second-instance', (_event, argv) => {
     focusMainWindow();
-    const protocolUrl = argv.find((arg) => typeof arg === 'string' && arg.startsWith('meetmind://'));
+    const protocolUrl = argv.find((arg) => typeof arg === 'string' && arg.startsWith('novameet://'));
     if (protocolUrl) logger.info('Opened via protocol', { protocolUrl });
   });
 }
 
-// macOS delivers meetmind:// links through open-url, not argv. Registered before `ready` so the
+// macOS delivers novameet:// links through open-url, not argv. Registered before `ready` so the
 // link that launched the app isn't lost; at launch the window opens anyway, so it only needs
 // focusing once the app is up.
 app.on('open-url', (event, url) => {
   event.preventDefault();
-  if (!url.startsWith('meetmind://')) return;
+  if (!url.startsWith('novameet://')) return;
   logger.info('Opened via protocol', { protocolUrl: url });
   if (app.isReady()) focusMainWindow();
 });
 
-// Only the packaged app should own meetmind://.
+// Only the packaged app should own novameet://.
 // Registering from `pnpm run dev` steals the handler and points it at electron.exe,
 // so "Open App" from the extension fails after install.
 if (app.isPackaged) {
-  app.setAsDefaultProtocolClient('meetmind');
+  app.setAsDefaultProtocolClient('novameet');
 }
 
-// Must be called before app.whenReady() to allow media playback from meetmind-audio://
+// Must be called before app.whenReady() to allow media playback from novameet-audio://
 protocol.registerSchemesAsPrivileged([{
-  scheme: 'meetmind-audio',
+  scheme: 'novameet-audio',
   privileges: {
     standard: true,
     secure: true,
@@ -246,7 +246,7 @@ function createMainWindow() {
       nodeIntegration: false,
       sandbox: false,
       backgroundThrottling: false,
-      additionalArguments: [`--meetmind-theme=${savedTheme}`],
+      additionalArguments: [`--novameet-theme=${savedTheme}`],
     },
     show: false,
   });
@@ -1735,21 +1735,21 @@ app.whenReady().then(async () => {
   registerIpcHandlers();
 
   // Serve session audio for renderer playback:
-  // meetmind-audio://session/<sessionId>  (preferred)
-  // meetmind-audio://<sessionId>          (legacy)
-  protocol.handle('meetmind-audio', (request) => {
+  // novameet-audio://session/<sessionId>  (preferred)
+  // novameet-audio://<sessionId>          (legacy)
+  protocol.handle('novameet-audio', (request) => {
     try {
       const parsed = new URL(request.url);
       const pathId = decodeURIComponent(parsed.pathname.replace(/^\/+/, '').split('/')[0] || '');
       const sessionId = pathId || parsed.hostname || '';
       if (!sessionId || sessionId === 'session') {
-        logger.warn('meetmind-audio request missing session id', { url: request.url });
+        logger.warn('novameet-audio request missing session id', { url: request.url });
         return new Response(null, { status: 400 });
       }
 
       const audioPath = resolveSessionAudioPath(sessionId);
       if (!audioPath) {
-        logger.warn('meetmind-audio file not found', { sessionId });
+        logger.warn('novameet-audio file not found', { sessionId });
         return new Response(null, { status: 404 });
       }
 
@@ -1767,7 +1767,7 @@ app.whenReady().then(async () => {
       const { size } = fs.statSync(audioPath);
       const rangeHeader = request.headers.get('Range');
 
-      logger.info('meetmind-audio streaming file', { sessionId, audioPath, mime, range: rangeHeader || 'none' });
+      logger.info('novameet-audio streaming file', { sessionId, audioPath, mime, range: rangeHeader || 'none' });
 
       if (rangeHeader) {
         const match = /bytes=(\d*)-(\d*)/.exec(rangeHeader);
@@ -1805,7 +1805,7 @@ app.whenReady().then(async () => {
         },
       });
     } catch (err) {
-      logger.error('meetmind-audio protocol error', err);
+      logger.error('novameet-audio protocol error', err);
       return new Response(null, { status: 500 });
     }
   });
@@ -1823,14 +1823,14 @@ app.whenReady().then(async () => {
     },
   });
 
-  // Keep meetmind:// pointed at this installed exe (not a leftover dev registration).
+  // Keep novameet:// pointed at this installed exe (not a leftover dev registration).
   if (app.isPackaged) {
-    app.setAsDefaultProtocolClient('meetmind');
+    app.setAsDefaultProtocolClient('novameet');
   }
 
-  // Windows cold-start via meetmind:// puts the URL on process.argv
+  // Windows cold-start via novameet:// puts the URL on process.argv
   const startupProtocolUrl = process.argv.find(
-    (arg) => typeof arg === 'string' && arg.startsWith('meetmind://'),
+    (arg) => typeof arg === 'string' && arg.startsWith('novameet://'),
   );
   if (startupProtocolUrl) {
     logger.info('Started via protocol', { startupProtocolUrl });
@@ -1876,7 +1876,7 @@ app.whenReady().then(async () => {
 });
 
 app.on('window-all-closed', () => {
-  // Don't quit: MeetMind keeps running in the tray (Windows) or menu bar (macOS). Closing the
+  // Don't quit: NovaMeet keeps running in the tray (Windows) or menu bar (macOS). Closing the
   // window only hides it (see the 'close' handler); Quit is in the tray menu, or ⌘Q on macOS.
 });
 

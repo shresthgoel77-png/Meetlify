@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm';
 function openExternal(e, url) {
   if (url?.startsWith('http')) {
     e.preventDefault();
-    window.meetmind?.shell?.openExternal(url);
+    window.novameet?.shell?.openExternal(url);
   }
 }
 

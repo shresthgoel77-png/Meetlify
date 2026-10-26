@@ -11,7 +11,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 // the custom titlebar's window controls with it.
 function resolveStartupTheme() {
   try {
-    const arg = (process.argv || []).find((a) => a.startsWith('--meetmind-theme='));
+    const arg = (process.argv || []).find((a) => a.startsWith('--novameet-theme='));
     const configured = arg ? arg.split('=')[1] : 'light';
     const themeSetting = ['light', 'dark', 'system'].includes(configured) ? configured : 'light';
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -41,14 +41,14 @@ try { startupTheme = resolveStartupTheme(); } catch { /* theme is cosmetic — n
 let windowShown = false;
 function markWindowShown() {
   windowShown = true;
-  try { window.dispatchEvent(new Event('meetmind:window-shown')); } catch { /* cosmetic */ }
+  try { window.dispatchEvent(new Event('novameet:window-shown')); } catch { /* cosmetic */ }
 }
 ipcRenderer.on('window:shown', markWindowShown);
 ipcRenderer.invoke('window:isVisible')
   .then((visible) => { if (visible && !windowShown) markWindowShown(); })
   .catch(() => { /* cosmetic — the page falls back to a timer */ });
 
-contextBridge.exposeInMainWorld('meetmind', {
+contextBridge.exposeInMainWorld('novameet', {
   // Effective theme ('light' | 'dark') at launch, for index.html's pre-paint script.
   startupTheme,
 

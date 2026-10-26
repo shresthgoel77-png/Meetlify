@@ -1,5 +1,5 @@
 /**
- * Generates MeetMind PNG + ICO icons from assets/icons/icon.svg
+ * Generates NovaMeet PNG + ICO icons from assets/icons/icon.svg
  * (sizes up to SMALL_MAX use the bolder assets/icons/icon-small.svg), plus the macOS menu-bar
  * template images from assets/icons/tray-template.svg
  * Run: pnpm run generate-icons

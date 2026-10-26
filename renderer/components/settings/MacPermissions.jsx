@@ -5,7 +5,7 @@ import { SettingsGroup, SettingRow, RowList } from './SettingsParts.jsx';
 import { useApp } from '../../lib/app-context.js';
 import { CAPTURE_STRATEGIES, describeAudioTest, peakOf } from '../../lib/audioTest.js';
 
-// macOS only (rendered by SystemSection): the privacy permissions MeetMind needs, and a test that
+// macOS only (rendered by SystemSection): the privacy permissions NovaMeet needs, and a test that
 // records 3 seconds of system audio with each capture method so a tester can see which one works
 // on their Mac and switch to it.
 
@@ -34,7 +34,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // One short system-audio capture with `strategy`, measuring the peak level.
 async function runCaptureTest(strategy) {
-  const begin = await window.meetmind.capture.testBegin(strategy);
+  const begin = await window.novameet.capture.testBegin(strategy);
   if (!begin?.success) return { error: begin?.error || 'Could not start the test' };
   let stream = null;
   let ctx = null;
@@ -65,7 +65,7 @@ async function runCaptureTest(strategy) {
   } finally {
     stream?.getTracks().forEach((t) => t.stop());
     ctx?.close().catch(() => {});
-    await window.meetmind.capture.testEnd();
+    await window.novameet.capture.testEnd();
   }
 }
 
@@ -76,7 +76,7 @@ export default function MacPermissions() {
   const [testing, setTesting] = useState(null);   // strategy id being tested
 
   const refresh = useCallback(async () => {
-    try { setStatus(await window.meetmind.permissions.status()); } catch { /* keep the last status */ }
+    try { setStatus(await window.novameet.permissions.status()); } catch { /* keep the last status */ }
   }, []);
 
   // Re-read when the window regains focus, e.g. back from System Settings.
@@ -88,10 +88,10 @@ export default function MacPermissions() {
 
   const handlePermission = async (kind) => {
     if (status?.[kind] === 'not-determined') {
-      await window.meetmind.permissions.request(kind);
+      await window.novameet.permissions.request(kind);
       await refresh();
     } else {
-      await window.meetmind.permissions.openSettings(kind);
+      await window.novameet.permissions.openSettings(kind);
     }
   };
 

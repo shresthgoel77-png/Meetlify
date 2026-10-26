@@ -181,8 +181,8 @@ export default function Dashboard({ onOpenSession, onNavigateToSettings, onNavig
 
   // Listen for calendar meeting-starting events
   useEffect(() => {
-    if (!window.meetmind?.on) return;
-    const unsub = window.meetmind.on('calendar:meeting-starting', (event) => {
+    if (!window.novameet?.on) return;
+    const unsub = window.novameet.on('calendar:meeting-starting', (event) => {
       setMeetingToast(event);
       // Auto-dismiss after 30 seconds
       const t = setTimeout(() => setMeetingToast((prev) => (prev?.id === event.id ? null : prev)), 30_000);
@@ -206,7 +206,7 @@ export default function Dashboard({ onOpenSession, onNavigateToSettings, onNavig
 
   const handleRecordFromCalendar = (event) => {
     if (event.meetingLink) {
-      window.meetmind.shell.openExternal(event.meetingLink);
+      window.novameet.shell.openExternal(event.meetingLink);
     }
     startRecording();
   };

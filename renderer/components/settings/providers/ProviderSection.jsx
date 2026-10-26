@@ -138,7 +138,7 @@ export default function ProviderSection({ kind, form, onChange }) {
     try {
       const values = {};
       for (const f of provider.credentials) values[f.configKey] = form[f.configKey] || '';
-      setResult(await window.meetmind.providers.test({ kind, id: provider.id, values, model }));
+      setResult(await window.novameet.providers.test({ kind, id: provider.id, values, model }));
     } catch (err) {
       setResult({ success: false, error: err.message });
     } finally {

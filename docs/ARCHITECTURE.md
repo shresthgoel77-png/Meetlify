@@ -1,6 +1,6 @@
-# MeetMind Architecture
+# NovaMeet Architecture
 
-This document is a complete technical reference for the MeetMind codebase: process
+This document is a complete technical reference for the NovaMeet codebase: process
 architecture, data flow, persistence, third party integrations, packages, assets, build
 pipeline, and CI/CD. It describes the system as implemented at version 4.6.0, not an
 aspirational design. Where behavior is a deliberate tradeoff, the reasoning is included so
@@ -11,9 +11,9 @@ For contributor commands and day to day workflow rules see [`AGENTS.md`](../AGEN
 
 ---
 
-## 1. What MeetMind is
+## 1. What NovaMeet is
 
-MeetMind is a free, MIT licensed desktop app for Windows 10/11 and (as a beta) macOS 14.2+ that
+NovaMeet is a free, MIT licensed desktop app for Windows 10/11 and (as a beta) macOS 14.2+ that
 turns online meetings into written meeting notes. It:
 
 1. Records system audio (Windows: WASAPI loopback, or a DirectShow fallback; macOS: the CoreAudio
@@ -62,7 +62,7 @@ Three build artifacts come out of this one repository:
    Stage 3: electron/services/notion.js         (optional, if configured)
         |
         v
- electron/db/sessions.js (sql.js, persisted to meetmind.db)
+ electron/db/sessions.js (sql.js, persisted to novameet.db)
         |
         v
  renderer/app.jsx (Dashboard, NoteViewer, TranscriptViewer, Settings, LogsViewer)
@@ -105,7 +105,7 @@ Owns:
   `app:navigate`, Hide/Quit, Edit and Window menus), and `app.requestSingleInstanceLock()` to
   prevent duplicate windows/tray icons on relaunch (focuses the existing window on
   `second-instance` instead). Closing the window only hides it on both platforms.
-- Registration of the `meetmind://` custom protocol as the app's default protocol client, but
+- Registration of the `novameet://` custom protocol as the app's default protocol client, but
   **only when packaged** (`app.isPackaged`). Registering it from `pnpm run dev` would steal the
   handler and point "Open App" links at the raw `electron.exe`, breaking the flow after a real
   install. Windows delivers links in `argv` (`second-instance`, or `process.argv` on a cold
@@ -113,12 +113,12 @@ Owns:
   launched the app isn't lost, and gets the scheme from electron-builder's `protocols`.
 - `--smoke` (checked on the first line of `main.js`, before anything else loads): hands over to
   `electron/smoke.js`, a headless self-test of the packaged app run by CI (section 16).
-- Registration of a second custom protocol, `meetmind-audio://`, as a privileged, streaming
+- Registration of a second custom protocol, `novameet-audio://`, as a privileged, streaming
   scheme (`protocol.registerSchemesAsPrivileged`, called before `app.whenReady()`). This is how
   the renderer's `<audio>` player streams a session's recording straight off disk, with HTTP
   Range support, without exposing a general file:// URL to the renderer. URL forms:
-  `meetmind-audio://session/<sessionId>` (preferred) and a legacy
-  `meetmind-audio://<sessionId>` form.
+  `novameet-audio://session/<sessionId>` (preferred) and a legacy
+  `novameet-audio://<sessionId>` form.
 - Every `ipcMain.handle` channel (the full list is in section 3.2).
 - Native meeting detection and the floating meeting overlay window (section 3.4): one
   `overlayState` object, updated by `broadcastStatus()` alongside every status message sent to
@@ -139,7 +139,7 @@ only moved to Notion's trash after the new one succeeds.
 
 ### 3.2 Preload (`electron/preload.js`)
 
-Exposes a single `window.meetmind` object via `contextBridge.exposeInMainWorld`, with
+Exposes a single `window.novameet` object via `contextBridge.exposeInMainWorld`, with
 `contextIsolation: true` and `nodeIntegration: false`. The renderer has no direct Node or
 Electron API access; every capability is an explicit, named IPC round trip. The surface is
 grouped by feature:
@@ -175,12 +175,12 @@ explicit allowlist of valid channel names (`recording:started`, `recording:stopp
 Settings… ⌘,)) so the renderer cannot subscribe to an arbitrary IPC channel.
 
 The meeting overlay window uses its own, smaller preload (`electron/overlay-preload.js`, run
-sandboxed) exposing only `window.meetmindOverlay`: `overlay:get-state`, `overlay:start`,
+sandboxed) exposing only `window.novameetOverlay`: `overlay:get-state`, `overlay:start`,
 `overlay:stop`, `overlay:dismiss`, `overlay:keep-recording`, `overlay:open-session` (invoke),
 `overlay:resize` and `overlay:closed` (send), and the `overlay:state` / `overlay:theme` push events.
 
 Preload also injects the startup theme class (`light`/`dark`) onto `<html>` synchronously, by
-reading a `--meetmind-theme=` argument that main passes via
+reading a `--novameet-theme=` argument that main passes via
 `webPreferences.additionalArguments`. This is read from `process.argv` only, with no IPC round
 trip, so it can never block or deadlock startup; a failure here just costs a brief flash of the
 wrong theme, and is wrapped so it can never take down the actual `contextBridge` exposure above
@@ -213,7 +213,7 @@ Supporting pieces: `RecordingBar.jsx` (persistent recording control), `Processin
 (pipeline progress), `SessionCard.jsx`, `UpcomingMeetings.jsx` (Google Calendar),
 `PasteTranscriptModal.jsx` (manual transcript import), `note/` (Markdown rendering,
 `copyMarkdown.js` for JSON<->Markdown conversion, `pdfDocument.jsx` for the PDF export
-template, `AudioPlayer.jsx` streaming from `meetmind-audio://`), `ui/` (Dialog, ConfirmDialog,
+template, `AudioPlayer.jsx` streaming from `novameet-audio://`), `ui/` (Dialog, ConfirmDialog,
 `Menu.jsx` for keyboard-navigable dropdown menus).
 
 State/plumbing: `lib/app-context.js`, `lib/hooks.js`, `lib/status.js`, `lib/format.js`,
@@ -245,7 +245,7 @@ detection):
 - **Who holds the mic**: the privacy-indicator consent registry
   `HKCU\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone`
   (`NonPackaged\<path with # for \>` for win32 apps, package family names for packaged apps). An
-  app is using the mic right now when its `LastUsedTimeStop` is `0`. MeetMind's own exe is ignored.
+  app is using the mic right now when its `LastUsedTimeStop` is `0`. NovaMeet's own exe is ignored.
 - **Window titles**: `EnumWindows` + `GetWindowTextW`, with the owning exe resolved via
   `QueryFullProcessImageNameW`.
 
@@ -276,7 +276,7 @@ hidden state and waits for the renderer's `overlay:closed` after the close anima
 
 ## 4. Audio capture pipeline
 
-MeetMind has two independent capture paths, tried in order (the second on Windows only).
+NovaMeet has two independent capture paths, tried in order (the second on Windows only).
 
 ### 4.1 Primary path: renderer capture
 
@@ -297,7 +297,7 @@ picker and answers with `audio: 'loopback'`:
   System Audio Recording permission. Electron's macOS loopback is new and behaves differently
   per video source, so the source is configurable as `config.macCaptureStrategy`
   (`electron/audio/mac-capture.js`): `screen` (default; a `desktopCapturer` screen), `frame`
-  (MeetMind's own frame, which may avoid the Screen Recording prompt) or `picker` (the macOS
+  (NovaMeet's own frame, which may avoid the Screen Recording prompt) or `picker` (the macOS
   system picker). Settings › System › "Test system audio" runs a 3 s capture per strategy via
   `capture:test-begin`/`capture:test-end` and lets the user switch. On macOS `main.js` asks for
   microphone access before a recording and allows 60 s for the renderer to start (permission
@@ -340,7 +340,7 @@ by the pure `ffmpegCandidates()` (unit-tested in `tests/ffmpeg-path.test.js`). I
 found, Settings → System offers a runtime download via the `ffmpeg:install` IPC handler
 (`electron/services/ffmpeg-installer.js`).
 
-Every FFmpeg MeetMind ships or installs comes from one table of pinned downloads,
+Every FFmpeg NovaMeet ships or installs comes from one table of pinned downloads,
 `electron/audio/ffmpeg-sources.js`, and goes through `electron/audio/ffmpeg-fetch.js`: each zip
 is checked against its pinned SHA-256 (`electron/utils/download.js`) before it is unpacked
 (PowerShell `Expand-Archive` on Windows, `ditto` on macOS). The same code serves the in-app
@@ -414,7 +414,7 @@ read). The controller checks that the recording is not silent and then calls the
     must first be uploaded to a Google Cloud Storage bucket (`@google-cloud/storage`). This mode
     is used automatically when a GCS bucket is configured; see
     [`docs/GCS-SETUP.md`](GCS-SETUP.md) for the bucket/service-account setup guide. It requires
-    write+delete access on the bucket for MeetMind, and read access for the Speech-to-Text
+    write+delete access on the bucket for NovaMeet, and read access for the Speech-to-Text
     service agent (same project is usually sufficient).
 
   Diarization output differs between versions and is normalized in a shared parser: v1 uses
@@ -493,7 +493,7 @@ Whether the transcript is included alongside the notes is controlled by
 ### 6.1 Sessions database (`electron/db/sessions.js`)
 
 Uses `sql.js` (SQLite compiled to WebAssembly), held entirely in memory while the app runs, and
-rewritten to a single file, `<userData>/meetmind.db`, on every mutation (`db.export()` to a
+rewritten to a single file, `<userData>/novameet.db`, on every mutation (`db.export()` to a
 `Buffer`, written with `fs.writeFileSync`). There is no migration system: the schema is defined
 with `CREATE TABLE IF NOT EXISTS`, so schema evolution has so far meant additive columns only.
 
@@ -562,7 +562,7 @@ from other machines on the network.
 Two plain HTTP endpoints exist alongside the WebSocket upgrade, for cases where the extension
 needs to reach the app without an open socket:
 
-- `GET /health`: returns `{ ok: true, app: 'MeetMind' }`, used by the extension to detect
+- `GET /health`: returns `{ ok: true, app: 'NovaMeet' }`, used by the extension to detect
   whether the desktop app is running at all.
 - `GET /open`: raises/focuses the main window, used by the "Open App" affordance.
 
@@ -594,12 +594,12 @@ loopback WebSocket/HTTP server from the service worker and content script).
   served as a `web_accessible_resource` (along with its font and icons) so it can be embedded
   into the Meet/Zoom page's own DOM context.
 - `popup.html`/`popup.js`: the toolbar popup shown when the extension icon is clicked.
-- `open-app.html`/`open-app.js`: a small page used to hand off to the `meetmind://` protocol or
+- `open-app.html`/`open-app.js`: a small page used to hand off to the `novameet://` protocol or
   the `/open` HTTP endpoint when the desktop app needs to be brought to the foreground from a
   context the content script cannot reach directly.
 
 The extension is built from source, not committed as a zip: `scripts/build-extension.js` zips
-`extension/` into `dist/meetmind-extension.zip`, run via `pnpm run build:ext`, and as part of
+`extension/` into `dist/novameet-extension.zip`, run via `pnpm run build:ext`, and as part of
 `predev`/`prebuild` so it is always in sync with the current source.
 
 ---
@@ -607,7 +607,7 @@ The extension is built from source, not committed as a zip: `scripts/build-exten
 ## 8. Google Calendar integration (`electron/services/google-calendar.js`)
 
 Optional. Uses `googleapis`' OAuth2 client with a user-supplied OAuth client ID/secret (the user
-creates their own Google Cloud OAuth client, since MeetMind ships no client secret of its own).
+creates their own Google Cloud OAuth client, since NovaMeet ships no client secret of its own).
 Scopes are read-only: `calendar.readonly` and `userinfo.email`.
 
 The OAuth redirect is handled by a short-lived local HTTP server bound to a loopback port in the
@@ -683,7 +683,7 @@ PDF is controlled by `pdfIncludeTranscript` (default off).
 | Sigstore (via `actions/attest`) | Signed build-provenance attestations for release files | GitHub OIDC (release workflow only) | `attest` job in `release.yml` |
 
 All of the above except GitHub Releases and FFmpeg distribution are bring-your-own-credentials:
-MeetMind ships no API keys or secrets of its own. Every key lives in the user's local
+NovaMeet ships no API keys or secrets of its own. Every key lives in the user's local
 `electron-store` settings file, in plaintext (there is no OS keychain integration or at-rest
 encryption of these values; see section 14).
 
@@ -762,7 +762,7 @@ published less than 24 hours ago (Dependabot has its own separate 7-day cooldown
 ## 14. Security model
 
 - **Renderer isolation**: `contextIsolation: true`, `nodeIntegration: false`. The renderer's
-  only access to the OS/Node is the explicit, allowlisted `window.meetmind` surface described in
+  only access to the OS/Node is the explicit, allowlisted `window.novameet` surface described in
   section 3.2.
 - **Local network bridge**: the WebSocket server binds to `127.0.0.1` only and accepts
   connections solely from a `chrome-extension://` origin. There is no additional
@@ -782,9 +782,9 @@ published less than 24 hours ago (Dependabot has its own separate 7-day cooldown
   OS user profile, in plaintext. There is no OS keychain (Windows Credential Manager, macOS Keychain) integration
   and no additional at-rest encryption layer. This is a known limitation, not a hidden one:
   anyone with file-system access to the user's profile can read these values.
-- **Custom protocols**: `meetmind://` is only registered as the default handler when the app is
+- **Custom protocols**: `novameet://` is only registered as the default handler when the app is
   packaged, to avoid a dev build silently hijacking the protocol from the installed app.
-  `meetmind-audio://` is scoped to session IDs resolved server-side against the sessions
+  `novameet-audio://` is scoped to session IDs resolved server-side against the sessions
   database; it does not accept an arbitrary file path from the renderer.
 - **Supply chain (CI/CD)**: every third-party GitHub Action is pinned to a full 40-character
   commit SHA (never a tag or branch), with `permissions: contents: read` at the top of every
@@ -810,11 +810,11 @@ published less than 24 hours ago (Dependabot has its own separate 7-day cooldown
   packaged app's actual version. There are two HTML entries: `index.html` (the app) and
   `overlay.html` (the meeting overlay window).
 - **Extension**: `scripts/build-extension.js` zips `extension/` into
-  `dist/meetmind-extension.zip` (`pnpm run build:ext`).
-- **Electron packaging** (`electron-builder.yml`): `appId: com.meetmind.app`, Windows NSIS
+  `dist/novameet-extension.zip` (`pnpm run build:ext`).
+- **Electron packaging** (`electron-builder.yml`): `appId: com.novameet.app`, Windows NSIS
   installer (`x64` only), `signAndEditExecutable: false` (unsigned), custom installer/uninstaller
   icons, desktop and start-menu shortcuts created, an `afterPack` hook
-  (`scripts/after-pack.js`), and the `meetmind://` protocol association declared via `protocols`.
+  (`scripts/after-pack.js`), and the `novameet://` protocol association declared via `protocols`.
   FFmpeg is pulled in as per-platform `extraResources` (`assets/ffmpeg/*.exe` on Windows,
   `assets/ffmpeg/mac-${arch}/` on macOS -> `ffmpeg/` in the packaged app),
   explicitly excluded from the `asar` archive's `files` list (`!assets/ffmpeg/**`) since ffmpeg
@@ -825,7 +825,7 @@ published less than 24 hours ago (Dependabot has its own separate 7-day cooldown
   `@koromix/koffi-*` native binary outside the archive, since a `.node` file can't be loaded from
   inside it.
 - **macOS packaging** (`mac:` in `electron-builder.yml`): `dmg` + `zip` targets for `arm64` and
-  `x64` (`MeetMind-X.Y.Z-<arch>.dmg` to download, `MeetMind-X.Y.Z-<arch>-mac.zip` +
+  `x64` (`NovaMeet-X.Y.Z-<arch>.dmg` to download, `NovaMeet-X.Y.Z-<arch>-mac.zip` +
   `latest-mac.yml` for the update check; `${arch}` stays in the names because electron-updater
   picks the file by it), `minimumSystemVersion: 14.2` (system-audio capture needs the CoreAudio
   Tap API), icon from `assets/icons/icon.png`, ad-hoc `identity: "-"`, `hardenedRuntime: false`
@@ -846,7 +846,7 @@ published less than 24 hours ago (Dependabot has its own separate 7-day cooldown
 - **Smoke test**: a packaged app started with `--smoke` (`electron/smoke.js`) uses a throwaway
   profile, opens no window, checks config + DB, finds and runs ffmpeg/ffprobe, encodes a 1 s Opus
   WebM and converts it with `convertWebmToWav`, loads koffi, queries the permissions API and the
-  meeting-detection backend, prints `MEETMIND_SMOKE {json}` and exits non-zero on any failure.
+  meeting-detection backend, prints `NOVAMEET_SMOKE {json}` and exits non-zero on any failure.
   `scripts/check-smoke.js` reads that output in CI, fails the step unless every check passed,
   and writes a table of the checks to the job summary.
 

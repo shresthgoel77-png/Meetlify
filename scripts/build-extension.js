@@ -1,5 +1,5 @@
 /**
- * Packages the Chrome extension into dist/meetmind-extension.zip
+ * Packages the Chrome extension into dist/novameet-extension.zip
  * with all files under an "Extension" folder.
  * Run: pnpm run build:ext
  */
@@ -14,8 +14,8 @@ const ROOT = path.join(__dirname, '..');
 const EXTENSION_SRC = path.join(ROOT, 'extension');
 const DIST = path.join(ROOT, 'dist');
 const STAGING_ROOT = path.join(DIST, '_ext-staging');
-const STAGING_DIR = path.join(STAGING_ROOT, 'meetmind-chrome-extension');
-const ZIP_PATH = path.join(DIST, 'meetmind-extension.zip');
+const STAGING_DIR = path.join(STAGING_ROOT, 'novameet-chrome-extension');
+const ZIP_PATH = path.join(DIST, 'novameet-extension.zip');
 
 const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
 const manifestPath = path.join(EXTENSION_SRC, 'manifest.json');
@@ -37,7 +37,7 @@ try {
     );
   } else {
     execSync(
-      `cd "${STAGING_ROOT}" && zip -r "${ZIP_PATH}" meetmind-chrome-extension`,
+      `cd "${STAGING_ROOT}" && zip -r "${ZIP_PATH}" novameet-chrome-extension`,
       { stdio: 'inherit' }
     );
   }

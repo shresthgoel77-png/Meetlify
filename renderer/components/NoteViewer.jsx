@@ -285,8 +285,8 @@ export default function NoteViewer({ session, onBack, onRefresh }) {
     }
   };
 
-  const handleGenerate = () => startPipeline(() => window.meetmind.processing.run(session.id));
-  const handleRetry = () => startPipeline(() => window.meetmind.processing.retry(session.id, 'all'));
+  const handleGenerate = () => startPipeline(() => window.novameet.processing.run(session.id));
+  const handleRetry = () => startPipeline(() => window.novameet.processing.retry(session.id, 'all'));
 
   const handleRegenerate = async () => {
     const ok = await confirm({
@@ -299,7 +299,7 @@ export default function NoteViewer({ session, onBack, onRefresh }) {
     if (!ok) return;
     setRegenerating(true);
     try {
-      await startPipeline(() => window.meetmind.processing.retry(session.id, 'notes'));
+      await startPipeline(() => window.novameet.processing.retry(session.id, 'notes'));
     } finally {
       setRegenerating(false);
     }
@@ -317,7 +317,7 @@ export default function NoteViewer({ session, onBack, onRefresh }) {
     if (!ok) return;
     setRegenerating(true);
     try {
-      await startPipeline(() => window.meetmind.processing.retry(session.id, 'transcription'));
+      await startPipeline(() => window.novameet.processing.retry(session.id, 'transcription'));
     } finally {
       setRegenerating(false);
     }
@@ -349,12 +349,12 @@ export default function NoteViewer({ session, onBack, onRefresh }) {
     }
     setUploading(true);
     try {
-      const result = await window.meetmind.notion.upload(session.id);
+      const result = await window.novameet.notion.upload(session.id);
       if (result?.success) {
         setUploadResult(result.url);
         addToast(updating ? 'Notion page updated.' : 'Notes synced to Notion.', 'success', {
           label: 'Open',
-          onClick: () => window.meetmind.shell.openExternal(result.url),
+          onClick: () => window.novameet.shell.openExternal(result.url),
         });
         onRefresh?.();
       } else {
@@ -378,12 +378,12 @@ export default function NoteViewer({ session, onBack, onRefresh }) {
       const html = buildPdfHtml(session, notes, normalizedTranscript, {
         includeTranscript: !!config?.pdfIncludeTranscript,
       });
-      const result = await window.meetmind.pdf.export(session.id, html);
+      const result = await window.novameet.pdf.export(session.id, html);
       if (result?.success) {
         const fileName = result.path.split(/[\\/]/).pop();
         addToast(`Saved ${fileName}`, 'success', {
           label: 'Show in folder',
-          onClick: () => window.meetmind.pdf.reveal(result.path),
+          onClick: () => window.novameet.pdf.reveal(result.path),
         });
       } else {
         addToast(result?.error || 'PDF export failed.', 'error');
@@ -422,7 +422,7 @@ export default function NoteViewer({ session, onBack, onRefresh }) {
     setSaving(true);
     try {
       const next = { ...parseNotesMarkdown(draft, savedNotes), _editedAt: new Date().toISOString() };
-      const result = await window.meetmind.sessions.updateNotes(session.id, next);
+      const result = await window.novameet.sessions.updateNotes(session.id, next);
       if (!result?.success) {
         addToast(result?.error || 'Couldn’t save the notes.', 'error');
         return;

@@ -5,7 +5,7 @@ const fs = require('fs');
 const { execFileSync } = require('child_process');
 
 /**
- * Embed MeetMind icon + version metadata into the Windows exe.
+ * Embed NovaMeet icon + version metadata into the Windows exe.
  * Needed because signAndEditExecutable is false (avoids winCodeSign symlink errors).
  * rcedit is a Windows binary, so skip it on non-Windows hosts.
  */
@@ -16,7 +16,7 @@ exports.default = async function afterPack(context) {
     return;
   }
 
-  const productName = context.packager.appInfo.productFilename || 'MeetMind';
+  const productName = context.packager.appInfo.productFilename || 'NovaMeet';
   const exePath = path.join(context.appOutDir, `${productName}.exe`);
   const iconPath = path.join(context.packager.projectDir, 'assets', 'icons', 'icon.ico');
   const rceditBin = path.join(
@@ -46,9 +46,9 @@ exports.default = async function afterPack(context) {
   execFileSync(rceditBin, [
     exePath,
     '--set-icon', iconPath,
-    '--set-version-string', 'FileDescription', 'MeetMind',
-    '--set-version-string', 'ProductName', 'MeetMind',
-    '--set-version-string', 'CompanyName', 'MeetMind',
+    '--set-version-string', 'FileDescription', 'NovaMeet',
+    '--set-version-string', 'ProductName', 'NovaMeet',
+    '--set-version-string', 'CompanyName', 'NovaMeet',
     '--set-version-string', 'OriginalFilename', `${productName}.exe`,
     '--set-file-version', version,
     '--set-product-version', version,

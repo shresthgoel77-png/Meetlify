@@ -1,5 +1,5 @@
 /**
- * MeetMind Overlay Script
+ * NovaMeet Overlay Script
  *
  * Runs inside the overlay iframe injected into Meet/Zoom pages.
  * Manages 5 UI states: IDLE → RECORDING → PROCESSING → COMPLETE → APP_OFFLINE
@@ -28,7 +28,7 @@ let dismissSeconds = 10;
 let collapsed = false;
 
 try {
-  collapsed = sessionStorage.getItem('meetmind-overlay-collapsed') === '1';
+  collapsed = sessionStorage.getItem('novameet-overlay-collapsed') === '1';
 } catch (_) {
   collapsed = false;
 }
@@ -78,7 +78,7 @@ function requestResize() {
 function setCollapsed(next) {
   collapsed = !!next;
   try {
-    sessionStorage.setItem('meetmind-overlay-collapsed', collapsed ? '1' : '0');
+    sessionStorage.setItem('novameet-overlay-collapsed', collapsed ? '1' : '0');
   } catch (_) { /* ignore */ }
 
   if (collapsed) {
