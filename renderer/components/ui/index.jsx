@@ -311,9 +311,9 @@ export function AvatarTile({ children, size = 48, className = '' }) {
 }
 
 // ── CTA Block / empty state ──────────────────────────────────────────────────
-export function EmptyState({ icon, title, message, action, compact = false }) {
+export function EmptyState({ icon, title, message, action, compact = false, className = '' }) {
   return (
-    <div className={`flex flex-col items-center text-center fade-in ${compact ? 'py-48' : 'py-64'}`}>
+    <div className={`flex flex-col items-center text-center fade-in ${compact ? 'py-48' : 'py-64'} ${className}`}>
       {icon && <AvatarTile size={compact ? 48 : 64}>{icon}</AvatarTile>}
       <h2
         className={`font-medium text-ink ${compact ? 'text-heading mt-24' : 'text-display mt-32'}`}

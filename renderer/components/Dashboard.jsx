@@ -7,7 +7,9 @@ import {
   ArrowRight,
   ClipboardList,
   Search,
+  Sparkles,
 } from 'lucide-react';
+import setupIllustration from '@assets/icons/setup-dashboard-key.svg';
 import { useApp } from '../lib/app-context.js';
 import PasteTranscriptModal from './PasteTranscriptModal.jsx';
 import UpcomingMeetings from './UpcomingMeetings.jsx';
@@ -93,21 +95,31 @@ function SetupCard({ config, setup, onSetup }) {
   const notionDone = !!(config?.notionToken?.trim() && config?.notionPageId?.trim());
 
   return (
-    <section className="card mb-32" aria-labelledby="setup-heading">
-      <p className="eyebrow">Getting started</p>
-      <h2 id="setup-heading" className="text-heading-sm font-medium text-ink mt-8">Finish setting up NovaMeet</h2>
-      <p className="text-body-sm text-graphite mt-8 max-w-[640px]">
-        Add your API keys so recordings can be transcribed and turned into notes. Notion is optional.
-      </p>
-      <div className="flex flex-wrap items-center gap-8 mt-24">
-        <StepBadge n={1} done={sttDone}>Speech-to-text</StepBadge>
-        <StepBadge n={2} done={llmDone}>{setup.llm?.name || 'Note generation'}</StepBadge>
-        <StepBadge n={3} done={notionDone}>Notion (optional)</StepBadge>
+    <section className="card mb-32 setup-card relative w-[98%] max-w-none mx-auto flex flex-row items-center justify-between px-10 py-6 overflow-hidden gap-24" aria-labelledby="setup-heading">
+      <div className="setup-card-content relative z-10 w-[60%] min-w-0 pr-8">
+        <p className="setup-card-badge">
+          <Sparkles size={13} strokeWidth={2} aria-hidden="true" />
+          Getting started
+        </p>
+        <h2 id="setup-heading" className="text-heading-sm font-medium text-ink mt-8">
+          Finish setting up <span className="setup-card-brand">NovaMeet</span>
+        </h2>
+        <p className="text-body-sm text-graphite mt-8 max-w-[640px]">
+          Add your API keys so recordings can be transcribed and turned into notes. Notion is optional.
+        </p>
+        <div className="flex flex-row flex-nowrap items-center w-full gap-8 mt-24">
+          <StepBadge n={1} done={sttDone} className="text-[11px] px-[8px] py-[4px] whitespace-nowrap">Speech-to-text</StepBadge>
+          <StepBadge n={2} done={llmDone} className="text-[11px] px-[8px] py-[4px] whitespace-nowrap">{setup.llm?.name || 'Note generation'}</StepBadge>
+          <StepBadge n={3} done={notionDone} className="text-[11px] px-[8px] py-[4px] whitespace-nowrap">Notion (optional)</StepBadge>
+        </div>
+        <button type="button" onClick={onSetup} className="btn-sunshine setup-card-button mt-32">
+          Set up keys
+          <ArrowRight size={16} strokeWidth={1.75} />
+        </button>
       </div>
-      <button type="button" onClick={onSetup} className="btn-sunshine mt-32">
-        Set up keys
-        <ArrowRight size={16} strokeWidth={1.75} />
-      </button>
+      <div className="w-[60%] flex justify-end items-center shrink-0">
+        <img src={setupIllustration} alt="" className="w-[50%] max-w-[50%] h-auto object-contain shrink-0 origin-right" aria-hidden="true" />
+      </div>
     </section>
   );
 }
@@ -323,6 +335,7 @@ export default function Dashboard({ onOpenSession, onNavigateToSettings, onNavig
             ) : sessionsError ? null : (
               <>
                 <EmptyState
+                  className="dashboard-empty-state"
                   icon={<Mic size={28} strokeWidth={1.5} />}
                   title="Record your first meeting"
                   message="Start recording any online or in-person meeting. NovaMeet transcribes it, writes the summary and pulls out the action items."
@@ -342,7 +355,7 @@ export default function Dashboard({ onOpenSession, onNavigateToSettings, onNavig
                   onNavigateToSettings={onNavigateToSettings}
                   onStartRecording={handleRecordFromCalendar}
                   isRecording={isRecording}
-                  className="mt-32"
+                  className="mt-32 dashboard-upcoming"
                 />
               </>
             )}
