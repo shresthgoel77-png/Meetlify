@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Check, ChevronRight, ExternalLink as ExternalLinkIcon, Loader2 } from 'lucide-react';
+import { Check, ChevronRight, ExternalLink as ExternalLinkIcon, Loader2, Play } from 'lucide-react';
 import { StatusDot } from '../ui/index.jsx';
 import { KEY_GUIDES } from './data.js';
 
@@ -8,7 +8,7 @@ export function openExternal(url) {
 }
 
 // ── Group card: a titled section of settings ──────────────────────────────────
-export function SettingsGroup({ title, description, icon, aside, children }) {
+export function SettingsGroup({  title, description, icon, aside, children }) {
   return (
     <section className="card">
       <header className="flex items-start justify-between gap-16">
@@ -62,16 +62,41 @@ export function ExternalLink({ href, children }) {
   );
 }
 
+export function YouTubeButton({ href }) {
+  return (
+    <button
+      type="button"
+      disabled={!href}
+      aria-label="View on YouTube"
+      title="View on YouTube"
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (href) openExternal(href);
+      }}
+      className="inline-flex items-center gap-4 text-caption font-semibold text-ink hover:text-graphite disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      <span>View on YouTube</span>
+      <span className="inline-flex h-24 w-24 items-center justify-center rounded-full bg-signal text-white" aria-hidden="true">
+        <Play size={11} strokeWidth={0} fill="currentColor" />
+      </span>
+    </button>
+  );
+}
+
 // ── "How to get a key" disclosure with numbered steps ─────────────────────────
 // `steps` (from a provider descriptor) wins; `provider` looks up the static guides in data.js.
-export function KeyGuide({ steps: stepsProp, provider, title = 'How to get a key' }) {
+export function KeyGuide({ steps: stepsProp, provider, title = 'How to get a key', youtubeUrl }) {
   const steps = stepsProp || KEY_GUIDES[provider];
   if (!steps?.length) return null;
   return (
     <details className="group">
-      <summary className="inline-flex items-center gap-8 cursor-pointer list-none text-caption font-medium text-graphite hover:text-ink [&::-webkit-details-marker]:hidden">
-        <ChevronRight size={14} strokeWidth={2} className="transition-transform duration-150 group-open:rotate-90" aria-hidden="true" />
-        {title}
+      <summary className="flex w-full items-center justify-between gap-16 cursor-pointer list-none text-caption font-medium text-graphite hover:text-ink [&::-webkit-details-marker]:hidden">
+        <span className="inline-flex items-center gap-8">
+          <ChevronRight size={14} strokeWidth={2} className="transition-transform duration-150 group-open:rotate-90" aria-hidden="true" />
+          {title}
+        </span>
+        <YouTubeButton href={youtubeUrl} />
       </summary>
       <ol className="mt-16 space-y-16">
         {steps.map((s, idx) => (

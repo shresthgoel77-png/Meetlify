@@ -30,6 +30,14 @@ const KINDS = {
   },
 };
 
+const PROVIDER_YOUTUBE_URLS = {
+  groq: 'https://youtu.be/8YX5D2FihRs',
+  gemini: 'https://youtu.be/yXDYe3X3cnk',
+  google: 'https://youtu.be/yXDYe3X3cnk',
+  sarvam: 'https://youtu.be/kDxH9kxYeGY',
+  assemblyai: 'https://youtu.be/z1Y_rNiN9oU',
+};
+
 const PROVIDER_TAGS = {
   google: [
     { label: 'Paid', tone: 'paid' },
@@ -220,7 +228,7 @@ export default function ProviderSection({ kind, form, onChange }) {
       >
         <div className="space-y-16">
           <CredentialFields kind={kind} provider={provider} form={form} onChange={onChange} />
-          <KeyGuide steps={provider.guide} />
+          <KeyGuide steps={provider.guide} youtubeUrl={PROVIDER_YOUTUBE_URLS[provider.id]} />
         </div>
       </SettingsGroup>
 
