@@ -515,6 +515,29 @@ h1, h2, h3, h4 {
   }
 }
 
+/* Provider attributes keep their own colors rather than inheriting the selected card text color. */
+.provider-tag {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid;
+  border-radius: 9999px;
+  padding: 4px 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.provider-tag--limited { color: #854D0E; background-color: #FEF3C7; border-color: #FCD34D; }
+.provider-tag--paid { color: #6B21A8; background-color: #F3E8FF; border-color: #D8B4FE; }
+.provider-tag--free { color: #065F46; background-color: #D1FAE5; border-color: #6EE7B7; }
+.provider-tag--multilingual { color: #075985; background-color: #E0F2FE; border-color: #7DD3FC; }
+.provider-tag--english { color: #334155; background-color: #E2E8F0; border-color: #94A3B8; }
+.dark .provider-tag--limited { color: #FDE68A; background-color: rgba(245, 158, 11, 0.2); border-color: #B45309; }
+.dark .provider-tag--paid { color: #DDD6FE; background-color: rgba(139, 92, 246, 0.22); border-color: #7C3AED; }
+.dark .provider-tag--free { color: #A7F3D0; background-color: rgba(16, 185, 129, 0.2); border-color: #059669; }
+.dark .provider-tag--multilingual { color: #BAE6FD; background-color: rgba(14, 165, 233, 0.2); border-color: #0284C7; }
+.dark .provider-tag--english { color: #E2E8F0; background-color: rgba(148, 163, 184, 0.18); border-color: #64748B; }
+
 /* ── TopBar and Navigation Active Styling ─────────────────────────────────── */
 nav[aria-label="Main"] button[aria-current="page"] {
   background-color: #0F172A;
