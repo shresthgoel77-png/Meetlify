@@ -38,6 +38,29 @@ const PROVIDER_YOUTUBE_URLS = {
   assemblyai: 'https://youtu.be/z1Y_rNiN9oU',
 };
 
+const PROVIDER_TAGS = {
+  google: [
+    { label: 'Paid', tone: 'paid' },
+    { label: 'Multilingual', tone: 'multilingual' },
+  ],
+  sarvam: [
+    { label: 'Limited', tone: 'limited' },
+    { label: 'Multilingual', tone: 'multilingual' },
+  ],
+  gemini: [
+    { label: 'Paid', tone: 'paid' },
+    { label: 'Multilingual', tone: 'multilingual' },
+  ],
+  groq: [
+    { label: 'Free', tone: 'free' },
+    { label: 'Multilingual', tone: 'multilingual' },
+  ],
+  assemblyai: [
+    { label: 'Limited', tone: 'limited' },
+    { label: 'English', tone: 'english' },
+  ],
+};
+
 function CredentialFields({ kind, provider, form, onChange }) {
   return provider.credentials.map((field) => {
     const Field = field.type === 'password' ? PasswordField : TextField;
@@ -167,7 +190,7 @@ export default function ProviderSection({ kind, form, onChange }) {
           value={provider.id}
           onChange={(id) => { onChange(k.providerKey, id); setResult(null); }}
           className="space-y-16"
-          renderOption={(p) => {
+          renderOption={(p, selected) => {
             const Icon = providerIcon(p.icon);
             const hasKey = isProviderConfigured(p, form);
             return (
@@ -177,15 +200,20 @@ export default function ProviderSection({ kind, form, onChange }) {
                 </AvatarTile>
                 <span className="flex-1 min-w-0 block">
                   <span className="flex flex-wrap items-center gap-8">
-                    <span className="text-body-sm font-medium text-ink">{p.name}</span>
-                    <span className="pill-quiet">{p.badge}</span>
+                    <span className={`text-body-sm font-medium ${selected ? 'text-on-sunshine' : 'text-ink'}`}>{p.name}</span>
+                    <span className={`pill-quiet ${selected ? 'text-on-sunshine' : ''}`}>{p.badge}</span>
+                    {(PROVIDER_TAGS[p.id] || []).map((tag) => (
+                      <span key={tag.label} className={`provider-tag provider-tag--${tag.tone}`}>
+                        {tag.label}
+                      </span>
+                    ))}
                     <span className="pill">
                       <StatusDot tone={hasKey ? 'ok' : 'neutral'} />
                       {hasKey ? 'Key set' : 'No key'}
                     </span>
                   </span>
-                  <span className="block text-caption text-graphite mt-8">{p.description}</span>
-                  <span className="block text-caption text-graphite mt-4">{p.pricing}</span>
+                  <span className={`block text-caption mt-8 ${selected ? 'text-on-sunshine' : 'text-graphite'}`}>{p.description}</span>
+                  <span className={`block text-caption mt-4 ${selected ? 'text-on-sunshine' : 'text-graphite'}`}>{p.pricing}</span>
                 </span>
               </span>
             );
