@@ -159,7 +159,7 @@ export default function ProviderSection({ kind, form, onChange }) {
           value={provider.id}
           onChange={(id) => { onChange(k.providerKey, id); setResult(null); }}
           className="space-y-16"
-          renderOption={(p) => {
+          renderOption={(p, selected) => {
             const Icon = providerIcon(p.icon);
             const hasKey = isProviderConfigured(p, form);
             return (
@@ -169,15 +169,15 @@ export default function ProviderSection({ kind, form, onChange }) {
                 </AvatarTile>
                 <span className="flex-1 min-w-0 block">
                   <span className="flex flex-wrap items-center gap-8">
-                    <span className="text-body-sm font-medium text-ink">{p.name}</span>
-                    <span className="pill-quiet">{p.badge}</span>
+                    <span className={`text-body-sm font-medium ${selected ? 'text-on-sunshine' : 'text-ink'}`}>{p.name}</span>
+                    <span className={`pill-quiet ${selected ? 'text-on-sunshine' : ''}`}>{p.badge}</span>
                     <span className="pill">
                       <StatusDot tone={hasKey ? 'ok' : 'neutral'} />
                       {hasKey ? 'Key set' : 'No key'}
                     </span>
                   </span>
-                  <span className="block text-caption text-graphite mt-8">{p.description}</span>
-                  <span className="block text-caption text-graphite mt-4">{p.pricing}</span>
+                  <span className={`block text-caption mt-8 ${selected ? 'text-on-sunshine' : 'text-graphite'}`}>{p.description}</span>
+                  <span className={`block text-caption mt-4 ${selected ? 'text-on-sunshine' : 'text-graphite'}`}>{p.pricing}</span>
                 </span>
               </span>
             );
