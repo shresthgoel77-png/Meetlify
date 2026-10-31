@@ -30,6 +30,14 @@ const KINDS = {
   },
 };
 
+const PROVIDER_YOUTUBE_URLS = {
+  groq: 'https://youtu.be/8YX5D2FihRs',
+  gemini: 'https://youtu.be/yXDYe3X3cnk',
+  google: 'https://youtu.be/yXDYe3X3cnk',
+  sarvam: 'https://youtu.be/kDxH9kxYeGY',
+  assemblyai: 'https://youtu.be/z1Y_rNiN9oU',
+};
+
 function CredentialFields({ kind, provider, form, onChange }) {
   return provider.credentials.map((field) => {
     const Field = field.type === 'password' ? PasswordField : TextField;
@@ -192,7 +200,7 @@ export default function ProviderSection({ kind, form, onChange }) {
       >
         <div className="space-y-16">
           <CredentialFields kind={kind} provider={provider} form={form} onChange={onChange} />
-          <KeyGuide steps={provider.guide} />
+          <KeyGuide steps={provider.guide} youtubeUrl={PROVIDER_YOUTUBE_URLS[provider.id]} />
         </div>
       </SettingsGroup>
 

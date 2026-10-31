@@ -103,7 +103,11 @@ export default function IntegrationsSection({ form, onChange }) {
             onChange={(e) => onChange('notionApiKey', e.target.value)}
             placeholder="secret_..."
           />
-          <KeyGuide provider="notion" title="How to connect Notion" />
+          <KeyGuide
+            provider="notion"
+            title="How to connect Notion"
+            youtubeUrl="https://youtu.be/i-dGCXA0cd0?si=OULzLHei9JS9tuZ2"
+          />
         </div>
 
         <TextField
