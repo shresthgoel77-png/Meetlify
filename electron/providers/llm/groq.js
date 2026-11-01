@@ -95,7 +95,7 @@ module.exports = {
     { text: 'Paste the key into the Groq API key field' },
   ],
   models: [
-    { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B Versatile', badge: 'Default', description: 'Strong general-purpose model with a 128K context window.' },
+    // { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B Versatile', badge: 'Default', description: 'Strong general-purpose model with a 128K context window.' },
     { id: 'openai/gpt-oss-120b', name: 'GPT-OSS 120B', badge: 'Pro', description: 'Largest open model on Groq; best for long or complex meetings.' },
     { id: 'openai/gpt-oss-20b', name: 'GPT-OSS 20B', badge: 'Fast', description: 'Quick and capable for typical meetings.' },
     { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B Instant', badge: 'Lite', description: 'Lowest latency and cost; best for short meetings.' },
